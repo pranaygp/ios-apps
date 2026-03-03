@@ -19,7 +19,7 @@ class PingPongScene: SKScene, SKPhysicsContactDelegate {
 
     private var score1 = 0
     private var score2 = 0
-    private let winScore = 5
+    private var winScore: Int { GameSettings.shared.pingPongWinScore }
     private var isGameOver = false
 
     private var paddle1Touch: UITouch?
@@ -29,7 +29,7 @@ class PingPongScene: SKScene, SKPhysicsContactDelegate {
     private let paddleHeight: CGFloat = 20
     private let ballRadius: CGFloat = 12
     private let paddleCornerRadius: CGFloat = 10
-    private let initialBallSpeed: CGFloat = 400
+    private var initialBallSpeed: CGFloat { GameSettings.shared.pongInitialSpeed }
     private let touchTargetPadding: CGFloat = 40  // extra touch area around paddles
 
     struct PhysicsCategory {

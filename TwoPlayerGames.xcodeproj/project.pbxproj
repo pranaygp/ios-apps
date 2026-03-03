@@ -19,6 +19,10 @@
 		A10000010 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010; };
 		A10000011 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000011; };
 		A10000012 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000012; };
+		A10000013 /* GameSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000013; };
+		A10000014 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000014; };
+		A10000015 /* ConnectFourView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000015; };
+		A10000016 /* ReactionTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000016; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +38,10 @@
 		A20000010 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
 		A20000011 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A20000012 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		A20000013 /* GameSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettings.swift; sourceTree = "<group>"; };
+		A20000014 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A20000015 /* ConnectFourView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectFourView.swift; sourceTree = "<group>"; };
+		A20000016 /* ReactionTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionTimeView.swift; sourceTree = "<group>"; };
 		A30000001 /* TwoPlayerGames.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwoPlayerGames.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -74,6 +82,7 @@
 			children = (
 				A20000002 /* HomeView.swift */,
 				A20000003 /* GameOverlay.swift */,
+				A20000014 /* SettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -84,8 +93,26 @@
 				A50000005 /* PingPong */,
 				A50000006 /* AirHockey */,
 				A50000007 /* TicTacToe */,
+				A50000011 /* ConnectFour */,
+				A50000012 /* ReactionTime */,
 			);
 			path = Games;
+			sourceTree = "<group>";
+		};
+		A50000011 /* ConnectFour */ = {
+			isa = PBXGroup;
+			children = (
+				A20000015 /* ConnectFourView.swift */,
+			);
+			path = ConnectFour;
+			sourceTree = "<group>";
+		};
+		A50000012 /* ReactionTime */ = {
+			isa = PBXGroup;
+			children = (
+				A20000016 /* ReactionTimeView.swift */,
+			);
+			path = ReactionTime;
 			sourceTree = "<group>";
 		};
 		A50000005 /* PingPong */ = {
@@ -119,6 +146,7 @@
 			children = (
 				A20000009 /* HapticManager.swift */,
 				A20000010 /* SoundManager.swift */,
+				A20000013 /* GameSettings.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -219,6 +247,10 @@
 				A10000008 /* TicTacToeView.swift in Sources */,
 				A10000009 /* HapticManager.swift in Sources */,
 				A10000010 /* SoundManager.swift in Sources */,
+				A10000013 /* GameSettings.swift in Sources */,
+				A10000014 /* SettingsView.swift in Sources */,
+				A10000015 /* ConnectFourView.swift in Sources */,
+				A10000016 /* ReactionTimeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -349,7 +381,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -383,7 +415,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

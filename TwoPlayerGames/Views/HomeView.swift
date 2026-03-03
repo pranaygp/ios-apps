@@ -6,84 +6,200 @@ struct GameCard: Identifiable {
     let subtitle: String
     let icon: String
     let gradient: [Color]
+    let gameType: HomeView.GameType
 }
 
 struct HomeView: View {
     @State private var selectedGame: GameType?
+    @State private var showSettings = false
+    @State private var animateCards = false
 
     enum GameType: Identifiable {
-        case pingPong, airHockey, ticTacToe
+        case pingPong, airHockey, ticTacToe, connectFour, reactionTime
         var id: Self { self }
     }
 
     private let games = [
         GameCard(
             title: "Ping Pong",
-            subtitle: "First to 5 wins",
+            subtitle: "Classic paddle battle",
             icon: "sportscourt",
-            gradient: [Color(red: 0.2, green: 0.5, blue: 1.0), Color(red: 0.1, green: 0.3, blue: 0.8)]
+            gradient: [Color(red: 0.25, green: 0.55, blue: 1.0), Color(red: 0.1, green: 0.3, blue: 0.85)],
+            gameType: .pingPong
         ),
         GameCard(
             title: "Air Hockey",
-            subtitle: "First to 7 wins",
+            subtitle: "Flick and score",
             icon: "circle.circle",
-            gradient: [Color(red: 1.0, green: 0.3, blue: 0.3), Color(red: 0.8, green: 0.1, blue: 0.2)]
+            gradient: [Color(red: 1.0, green: 0.35, blue: 0.35), Color(red: 0.8, green: 0.12, blue: 0.2)],
+            gameType: .airHockey
         ),
         GameCard(
             title: "Tic Tac Toe",
             subtitle: "Classic strategy",
             icon: "number",
-            gradient: [Color(red: 0.3, green: 0.8, blue: 0.4), Color(red: 0.1, green: 0.6, blue: 0.3)]
+            gradient: [Color(red: 0.3, green: 0.82, blue: 0.45), Color(red: 0.12, green: 0.62, blue: 0.3)],
+            gameType: .ticTacToe
+        ),
+        GameCard(
+            title: "Connect Four",
+            subtitle: "Drop to connect",
+            icon: "circle.grid.3x3.fill",
+            gradient: [Color(red: 1.0, green: 0.7, blue: 0.15), Color(red: 0.9, green: 0.5, blue: 0.05)],
+            gameType: .connectFour
+        ),
+        GameCard(
+            title: "Reaction Time",
+            subtitle: "Test your reflexes",
+            icon: "bolt.fill",
+            gradient: [Color(red: 0.8, green: 0.3, blue: 1.0), Color(red: 0.55, green: 0.1, blue: 0.85)],
+            gameType: .reactionTime
         ),
     ]
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.black.ignoresSafeArea()
+        ZStack {
+            // Animated gradient background
+            backgroundView
 
-                ScrollView {
-                    VStack(spacing: 24) {
-                        Text("2 Player Games")
-                            .font(.system(size: 34, weight: .bold))
-                            .foregroundStyle(.white)
-                            .padding(.top, 20)
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 20) {
+                    // Header
+                    headerView
+                        .padding(.top, 16)
 
-                        Text("Pick a game and challenge your friend!")
-                            .font(.subheadline)
-                            .foregroundStyle(.gray)
-
-                        VStack(spacing: 16) {
-                            ForEach(Array(games.enumerated()), id: \.element.id) { index, game in
-                                Button {
-                                    HapticManager.impact(.light)
-                                    switch index {
-                                    case 0: selectedGame = .pingPong
-                                    case 1: selectedGame = .airHockey
-                                    default: selectedGame = .ticTacToe
-                                    }
-                                } label: {
-                                    GameCardView(game: game)
-                                }
-                                .buttonStyle(.plain)
+                    // Game cards
+                    VStack(spacing: 14) {
+                        ForEach(Array(games.enumerated()), id: \.element.id) { index, game in
+                            Button {
+                                HapticManager.impact(.light)
+                                selectedGame = game.gameType
+                            } label: {
+                                GameCardView(game: game)
                             }
+                            .buttonStyle(GameCardButtonStyle())
+                            .opacity(animateCards ? 1 : 0)
+                            .offset(y: animateCards ? 0 : 20)
+                            .animation(.easeOut(duration: 0.4).delay(Double(index) * 0.08), value: animateCards)
                         }
-                        .padding(.horizontal, 20)
                     }
-                    .padding(.bottom, 40)
+                    .padding(.horizontal, 20)
+
+                    Spacer(minLength: 40)
                 }
-            }
-            .fullScreenCover(item: $selectedGame) { game in
-                switch game {
-                case .pingPong:
-                    PingPongView()
-                case .airHockey:
-                    AirHockeyView()
-                case .ticTacToe:
-                    TicTacToeView()
-                }
+                .padding(.bottom, 40)
             }
         }
+        .onAppear {
+            withAnimation {
+                animateCards = true
+            }
+        }
+        .fullScreenCover(item: $selectedGame) { game in
+            gameView(for: game)
+                .transition(.opacity)
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
+        }
+    }
+
+    private var backgroundView: some View {
+        ZStack {
+            Color(white: 0.06).ignoresSafeArea()
+
+            // Subtle gradient orbs
+            Circle()
+                .fill(
+                    RadialGradient(
+                        colors: [Color.blue.opacity(0.12), Color.clear],
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: 200
+                    )
+                )
+                .frame(width: 400, height: 400)
+                .offset(x: -80, y: -200)
+                .blur(radius: 20)
+
+            Circle()
+                .fill(
+                    RadialGradient(
+                        colors: [Color.purple.opacity(0.08), Color.clear],
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: 200
+                    )
+                )
+                .frame(width: 400, height: 400)
+                .offset(x: 100, y: 300)
+                .blur(radius: 20)
+        }
+    }
+
+    private var headerView: some View {
+        VStack(spacing: 8) {
+            HStack {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("2 Player")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.5))
+                        .textCase(.uppercase)
+                        .tracking(2)
+
+                    Text("Games")
+                        .font(.system(size: 38, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                }
+
+                Spacer()
+
+                Button {
+                    HapticManager.impact(.light)
+                    showSettings = true
+                } label: {
+                    Image(systemName: "gearshape.fill")
+                        .font(.system(size: 20))
+                        .foregroundStyle(.white.opacity(0.5))
+                        .frame(width: 44, height: 44)
+                        .background(
+                            Circle()
+                                .fill(Color.white.opacity(0.08))
+                        )
+                }
+            }
+            .padding(.horizontal, 24)
+
+            Text("Challenge your friend!")
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.4))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 24)
+        }
+    }
+
+    @ViewBuilder
+    private func gameView(for game: GameType) -> some View {
+        switch game {
+        case .pingPong:
+            PingPongView()
+        case .airHockey:
+            AirHockeyView()
+        case .ticTacToe:
+            TicTacToeView()
+        case .connectFour:
+            ConnectFourView()
+        case .reactionTime:
+            ReactionTimeView()
+        }
+    }
+}
+
+struct GameCardButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
     }
 }
 
@@ -92,6 +208,7 @@ struct GameCardView: View {
 
     var body: some View {
         HStack(spacing: 16) {
+            // Icon
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(
@@ -101,37 +218,37 @@ struct GameCardView: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                    .frame(width: 60, height: 60)
+                    .frame(width: 56, height: 56)
 
                 Image(systemName: game.icon)
-                    .font(.system(size: 24, weight: .semibold))
+                    .font(.system(size: 22, weight: .semibold))
                     .foregroundStyle(.white)
             }
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(game.title)
-                    .font(.system(size: 20, weight: .semibold))
+                    .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(.white)
 
                 Text(game.subtitle)
-                    .font(.subheadline)
-                    .foregroundStyle(.gray)
+                    .font(.system(size: 13))
+                    .foregroundStyle(.white.opacity(0.4))
             }
 
             Spacer()
 
             Image(systemName: "chevron.right")
-                .foregroundStyle(.gray)
-                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.25))
+                .font(.system(size: 13, weight: .semibold))
         }
-        .padding(16)
+        .padding(14)
         .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white.opacity(0.08))
+            RoundedRectangle(cornerRadius: 18)
+                .fill(Color.white.opacity(0.06))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(Color.white.opacity(0.08), lineWidth: 1)
         )
     }
 }

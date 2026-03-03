@@ -17,7 +17,7 @@ class AirHockeyScene: SKScene, SKPhysicsContactDelegate {
 
     private var score1 = 0
     private var score2 = 0
-    private let winScore = 7
+    private var winScore: Int { GameSettings.shared.airHockeyWinScore }
     private var isGameOver = false
 
     private var paddle1Touch: UITouch?
