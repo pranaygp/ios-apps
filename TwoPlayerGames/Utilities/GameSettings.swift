@@ -10,6 +10,7 @@ class GameSettings: ObservableObject {
     @AppStorage("ticTacToeWinScore") var ticTacToeWinScore = 3
     @AppStorage("connectFourWinScore") var connectFourWinScore = 3
     @AppStorage("reactionTimeWinScore") var reactionTimeWinScore = 5
+    @AppStorage("simonSaysWinScore") var simonSaysWinScore = 3
     @AppStorage("pongBallSpeed") var pongBallSpeed = 1 // 0=slow, 1=normal, 2=fast
 
     var pongInitialSpeed: CGFloat {

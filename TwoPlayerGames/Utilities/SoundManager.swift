@@ -8,12 +8,17 @@ enum SoundManager {
 
     static func playScore() {
         guard GameSettings.shared.soundEnabled else { return }
-        AudioServicesPlaySystemSound(1025)
+        AudioServicesPlaySystemSound(1016)
     }
 
     static func playWin() {
         guard GameSettings.shared.soundEnabled else { return }
         AudioServicesPlaySystemSound(1335)
+    }
+
+    static func playLose() {
+        guard GameSettings.shared.soundEnabled else { return }
+        AudioServicesPlaySystemSound(1073)
     }
 
     static func playPlace() {
@@ -33,11 +38,23 @@ enum SoundManager {
 
     static func playGo() {
         guard GameSettings.shared.soundEnabled else { return }
-        AudioServicesPlaySystemSound(1025)
+        AudioServicesPlaySystemSound(1113)
     }
 
     static func playDrop() {
         guard GameSettings.shared.soundEnabled else { return }
-        AudioServicesPlaySystemSound(1104)
+        AudioServicesPlaySystemSound(1100)
+    }
+
+    static func playButtonTap() {
+        guard GameSettings.shared.soundEnabled else { return }
+        AudioServicesPlaySystemSound(1123)
+    }
+
+    static func playSimonTone(index: Int) {
+        guard GameSettings.shared.soundEnabled else { return }
+        let sounds: [SystemSoundID] = [1052, 1054, 1109, 1110]
+        let id = sounds[index % sounds.count]
+        AudioServicesPlaySystemSound(id)
     }
 }

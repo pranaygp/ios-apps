@@ -142,37 +142,67 @@ struct ConnectFourView: View {
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [Color.red.opacity(0.9), Color(red: 0.7, green: 0.1, blue: 0.1)],
+                            colors: [
+                                Color(red: 1.0, green: 0.25, blue: 0.2),
+                                Color(red: 0.85, green: 0.1, blue: 0.1)
+                            ],
                             center: .init(x: 0.35, y: 0.35),
                             startRadius: 0,
-                            endRadius: 20
+                            endRadius: 22
                         )
                     )
+                    .overlay(
+                        Circle()
+                            .fill(
+                                RadialGradient(
+                                    colors: [Color.white.opacity(0.3), Color.clear],
+                                    center: .init(x: 0.3, y: 0.25),
+                                    startRadius: 0,
+                                    endRadius: 12
+                                )
+                            )
+                    )
                     .padding(4)
-                    .shadow(color: isWinning ? Color.red.opacity(0.6) : Color.clear, radius: isWinning ? 6 : 0)
+                    .shadow(color: isWinning ? Color.red.opacity(0.8) : Color.red.opacity(0.15), radius: isWinning ? 10 : 2)
+                    .scaleEffect(isWinning ? (winPulse ? 1.12 : 0.95) : 1.0)
                     .offset(y: isLastDrop && !dropAnimating ? -CGFloat(row + 2) * 52 : 0)
                     .scaleEffect(isLastDrop && !dropAnimating ? 0.8 : 1.0)
                     .animation(
-                        isLastDrop ? .interpolatingSpring(stiffness: 120, damping: 12) : .default,
-                        value: dropAnimating
+                        isWinning ? .easeInOut(duration: 0.5).repeatForever(autoreverses: true) : (isLastDrop ? .interpolatingSpring(stiffness: 120, damping: 12) : .default),
+                        value: isWinning ? winPulse : dropAnimating
                     )
             } else if value == 2 {
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [Color.yellow, Color(red: 0.85, green: 0.65, blue: 0.0)],
+                            colors: [
+                                Color(red: 1.0, green: 0.88, blue: 0.1),
+                                Color(red: 0.92, green: 0.7, blue: 0.0)
+                            ],
                             center: .init(x: 0.35, y: 0.35),
                             startRadius: 0,
-                            endRadius: 20
+                            endRadius: 22
                         )
                     )
+                    .overlay(
+                        Circle()
+                            .fill(
+                                RadialGradient(
+                                    colors: [Color.white.opacity(0.35), Color.clear],
+                                    center: .init(x: 0.3, y: 0.25),
+                                    startRadius: 0,
+                                    endRadius: 12
+                                )
+                            )
+                    )
                     .padding(4)
-                    .shadow(color: isWinning ? Color.yellow.opacity(0.6) : Color.clear, radius: isWinning ? 6 : 0)
+                    .shadow(color: isWinning ? Color.yellow.opacity(0.8) : Color.yellow.opacity(0.1), radius: isWinning ? 10 : 2)
+                    .scaleEffect(isWinning ? (winPulse ? 1.12 : 0.95) : 1.0)
                     .offset(y: isLastDrop && !dropAnimating ? -CGFloat(row + 2) * 52 : 0)
                     .scaleEffect(isLastDrop && !dropAnimating ? 0.8 : 1.0)
                     .animation(
-                        isLastDrop ? .interpolatingSpring(stiffness: 120, damping: 12) : .default,
-                        value: dropAnimating
+                        isWinning ? .easeInOut(duration: 0.5).repeatForever(autoreverses: true) : (isLastDrop ? .interpolatingSpring(stiffness: 120, damping: 12) : .default),
+                        value: isWinning ? winPulse : dropAnimating
                     )
             }
         }

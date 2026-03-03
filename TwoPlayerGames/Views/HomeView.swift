@@ -13,9 +13,11 @@ struct HomeView: View {
     @State private var selectedGame: GameType?
     @State private var showSettings = false
     @State private var animateCards = false
+    @State private var shimmerOffset: CGFloat = -200
+    @State private var floatingPhase = false
 
     enum GameType: Identifiable {
-        case pingPong, airHockey, ticTacToe, connectFour, reactionTime
+        case pingPong, airHockey, ticTacToe, connectFour, reactionTime, simonSays
         var id: Self { self }
     }
 
@@ -55,6 +57,13 @@ struct HomeView: View {
             gradient: [Color(red: 0.8, green: 0.3, blue: 1.0), Color(red: 0.55, green: 0.1, blue: 0.85)],
             gameType: .reactionTime
         ),
+        GameCard(
+            title: "Simon Says",
+            subtitle: "Memory pattern challenge",
+            icon: "brain.head.profile",
+            gradient: [Color(red: 1.0, green: 0.45, blue: 0.55), Color(red: 0.85, green: 0.2, blue: 0.4)],
+            gameType: .simonSays
+        ),
     ]
 
     var body: some View {
@@ -73,14 +82,16 @@ struct HomeView: View {
                         ForEach(Array(games.enumerated()), id: \.element.id) { index, game in
                             Button {
                                 HapticManager.impact(.light)
+                                SoundManager.playButtonTap()
                                 selectedGame = game.gameType
                             } label: {
                                 GameCardView(game: game)
                             }
                             .buttonStyle(GameCardButtonStyle())
                             .opacity(animateCards ? 1 : 0)
-                            .offset(y: animateCards ? 0 : 20)
+                            .offset(y: animateCards ? (floatingPhase ? -1.5 : 1.5) : 20)
                             .animation(.easeOut(duration: 0.4).delay(Double(index) * 0.08), value: animateCards)
+                            .animation(.easeInOut(duration: 2.5 + Double(index) * 0.2).repeatForever(autoreverses: true), value: floatingPhase)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -93,6 +104,12 @@ struct HomeView: View {
         .onAppear {
             withAnimation {
                 animateCards = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                floatingPhase = true
+            }
+            withAnimation(.linear(duration: 2.5).repeatForever(autoreverses: false)) {
+                shimmerOffset = 300
             }
         }
         .fullScreenCover(item: $selectedGame) { game in
@@ -148,6 +165,20 @@ struct HomeView: View {
                     Text("Games")
                         .font(.system(size: 38, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
+                        .overlay(
+                            LinearGradient(
+                                colors: [.clear, .white.opacity(0.4), .clear],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                            .frame(width: 80)
+                            .offset(x: shimmerOffset)
+                            .mask(
+                                Text("Games")
+                                    .font(.system(size: 38, weight: .bold, design: .rounded))
+                            )
+                        )
+                        .clipped()
                 }
 
                 Spacer()
@@ -194,6 +225,8 @@ struct HomeView: View {
             ConnectFourView()
         case .reactionTime:
             ReactionTimeView()
+        case .simonSays:
+            SimonSaysView()
         }
     }
 }

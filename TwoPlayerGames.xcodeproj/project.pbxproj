@@ -23,6 +23,7 @@
 		A10000014 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000014; };
 		A10000015 /* ConnectFourView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000015; };
 		A10000016 /* ReactionTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000016; };
+		A10000017 /* SimonSaysView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000017; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		A20000014 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A20000015 /* ConnectFourView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectFourView.swift; sourceTree = "<group>"; };
 		A20000016 /* ReactionTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionTimeView.swift; sourceTree = "<group>"; };
+		A20000017 /* SimonSaysView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimonSaysView.swift; sourceTree = "<group>"; };
 		A30000001 /* TwoPlayerGames.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwoPlayerGames.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -95,8 +97,17 @@
 				A50000007 /* TicTacToe */,
 				A50000011 /* ConnectFour */,
 				A50000012 /* ReactionTime */,
+				A50000013 /* SimonSays */,
 			);
 			path = Games;
+			sourceTree = "<group>";
+		};
+		A50000013 /* SimonSays */ = {
+			isa = PBXGroup;
+			children = (
+				A20000017 /* SimonSaysView.swift */,
+			);
+			path = SimonSays;
 			sourceTree = "<group>";
 		};
 		A50000011 /* ConnectFour */ = {
@@ -251,6 +262,7 @@
 				A10000014 /* SettingsView.swift in Sources */,
 				A10000015 /* ConnectFourView.swift in Sources */,
 				A10000016 /* ReactionTimeView.swift in Sources */,
+				A10000017 /* SimonSaysView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,7 +393,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -416,7 +428,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

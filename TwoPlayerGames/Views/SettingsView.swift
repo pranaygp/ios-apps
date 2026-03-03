@@ -49,6 +49,12 @@ struct SettingsView: View {
                 } header: {
                     Text("Reaction Time")
                 }
+
+                Section {
+                    Stepper("Rounds to Win: \(settings.simonSaysWinScore)", value: $settings.simonSaysWinScore, in: 1...10)
+                } header: {
+                    Text("Simon Says")
+                }
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
