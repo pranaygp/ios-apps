@@ -105,15 +105,13 @@ class AirHockeyScene: SKScene, SKPhysicsContactDelegate {
 
     private func setupGoals() {
         let midX = size.width / 2
-        let halfGoal = goalWidth / 2
 
         // Goal indicators (visual)
         for isTop in [false, true] {
             let y: CGFloat = isTop ? size.height - rinkInset : rinkInset
             let goalLine = SKShapeNode(rectOf: CGSize(width: goalWidth, height: 4), cornerRadius: 2)
             goalLine.position = CGPoint(x: midX, y: y)
-            goalLine.fillColor = isTop ? UIColor(red: 1.0, green: 0.3, blue: 0.3, alpha: 0.5)
-                                        : UIColor(red: 0.2, green: 0.5, blue: 1.0, alpha: 0.5)
+            goalLine.fillColor = isTop ? UIColor(red: 1.0, green: 0.3, blue: 0.3, alpha: 0.5) : UIColor(red: 0.2, green: 0.5, blue: 1.0, alpha: 0.5)
             goalLine.strokeColor = .clear
             goalLine.zPosition = -1
             addChild(goalLine)
