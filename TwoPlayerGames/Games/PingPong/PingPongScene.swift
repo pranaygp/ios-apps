@@ -25,11 +25,12 @@ class PingPongScene: SKScene, SKPhysicsContactDelegate {
     private var paddle1Touch: UITouch?
     private var paddle2Touch: UITouch?
 
-    private let paddleWidth: CGFloat = 100
-    private let paddleHeight: CGFloat = 16
-    private let ballRadius: CGFloat = 10
-    private let paddleCornerRadius: CGFloat = 8
+    private let paddleWidth: CGFloat = 120
+    private let paddleHeight: CGFloat = 20
+    private let ballRadius: CGFloat = 12
+    private let paddleCornerRadius: CGFloat = 10
     private let initialBallSpeed: CGFloat = 400
+    private let touchTargetPadding: CGFloat = 40  // extra touch area around paddles
 
     struct PhysicsCategory {
         static let ball: UInt32 = 0x1 << 0
@@ -223,15 +224,33 @@ class PingPongScene: SKScene, SKPhysicsContactDelegate {
             SoundManager.playHit()
             HapticManager.impact(.light)
 
-            // Add slight speed increase
-            if let velocity = ball.physicsBody?.velocity {
-                let speed = sqrt(velocity.dx * velocity.dx + velocity.dy * velocity.dy)
-                let maxSpeed: CGFloat = 700
-                if speed < maxSpeed {
-                    let factor: CGFloat = 1.05
-                    ball.physicsBody?.velocity = CGVector(dx: velocity.dx * factor, dy: velocity.dy * factor)
-                }
+            // Determine which paddle was hit
+            let paddleBody: SKPhysicsBody?
+            if contact.bodyA.categoryBitMask == PhysicsCategory.paddle {
+                paddleBody = contact.bodyA
+            } else {
+                paddleBody = contact.bodyB
             }
+
+            guard let paddleNode = paddleBody?.node, let ballVelocity = ball.physicsBody?.velocity else { return }
+
+            // Calculate angle based on where ball hit the paddle
+            let offset = ball.position.x - paddleNode.position.x
+            let normalizedOffset = offset / (paddleWidth / 2)  // -1 to 1
+            let maxBounceAngle: CGFloat = CGFloat.pi / 3  // 60 degrees max
+            let bounceAngle = normalizedOffset * maxBounceAngle
+
+            // Maintain or slightly increase speed
+            let currentSpeed = sqrt(ballVelocity.dx * ballVelocity.dx + ballVelocity.dy * ballVelocity.dy)
+            let maxSpeed: CGFloat = 800
+            let newSpeed = min(currentSpeed * 1.05, maxSpeed)
+
+            // Ball goes up if it hit paddle1 (bottom), down if paddle2 (top)
+            let direction: CGFloat = paddleNode.position.y < size.height / 2 ? 1 : -1
+            let dx = sin(bounceAngle) * newSpeed
+            let dy = direction * cos(bounceAngle) * newSpeed
+
+            ball.physicsBody?.velocity = CGVector(dx: dx, dy: dy)
         }
     }
 

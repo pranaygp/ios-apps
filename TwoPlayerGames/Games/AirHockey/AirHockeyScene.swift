@@ -23,7 +23,13 @@ class AirHockeyScene: SKScene, SKPhysicsContactDelegate {
     private var paddle1Touch: UITouch?
     private var paddle2Touch: UITouch?
 
-    private let paddleRadius: CGFloat = 32
+    private var paddle1PrevPos: CGPoint = .zero
+    private var paddle2PrevPos: CGPoint = .zero
+    private var paddle1Velocity: CGVector = .zero
+    private var paddle2Velocity: CGVector = .zero
+    private var lastUpdateTime: TimeInterval = 0
+
+    private let paddleRadius: CGFloat = 40
     private let puckRadius: CGFloat = 18
     private let goalWidth: CGFloat = 140
     private let rinkInset: CGFloat = 10
@@ -259,6 +265,31 @@ class AirHockeyScene: SKScene, SKPhysicsContactDelegate {
         if bodies.contains(PhysicsCategory.puck) && bodies.contains(PhysicsCategory.paddle) {
             SoundManager.playHit()
             HapticManager.impact(.medium)
+
+            // Transfer paddle momentum to puck
+            let paddleBody = contact.bodyA.categoryBitMask == PhysicsCategory.paddle ? contact.bodyA : contact.bodyB
+            guard let paddleNode = paddleBody.node else { return }
+
+            let paddleVel = paddleNode === paddle1 ? paddle1Velocity : paddle2Velocity
+
+            // Direction from paddle center to puck
+            let dx = puck.position.x - paddleNode.position.x
+            let dy = puck.position.y - paddleNode.position.y
+            let dist = sqrt(dx * dx + dy * dy)
+            guard dist > 0 else { return }
+            let normX = dx / dist
+            let normY = dy / dist
+
+            // Combine paddle speed with hit direction for realistic momentum
+            let paddleSpeed = sqrt(paddleVel.dx * paddleVel.dx + paddleVel.dy * paddleVel.dy)
+            let hitStrength = max(paddleSpeed * 1.8, 250)
+            let maxHit: CGFloat = 1000
+
+            let finalStrength = min(hitStrength, maxHit)
+            puck.physicsBody?.velocity = CGVector(
+                dx: normX * finalStrength + paddleVel.dx * 0.4,
+                dy: normY * finalStrength + paddleVel.dy * 0.4
+            )
         } else if bodies.contains(PhysicsCategory.puck) && bodies.contains(PhysicsCategory.wall) {
             HapticManager.impact(.light)
         }
@@ -267,6 +298,24 @@ class AirHockeyScene: SKScene, SKPhysicsContactDelegate {
     // MARK: - Game Update
 
     override func update(_ currentTime: TimeInterval) {
+        // Track paddle velocities
+        if lastUpdateTime > 0 {
+            let dt = currentTime - lastUpdateTime
+            if dt > 0 && dt < 0.1 {
+                paddle1Velocity = CGVector(
+                    dx: (paddle1.position.x - paddle1PrevPos.x) / CGFloat(dt),
+                    dy: (paddle1.position.y - paddle1PrevPos.y) / CGFloat(dt)
+                )
+                paddle2Velocity = CGVector(
+                    dx: (paddle2.position.x - paddle2PrevPos.x) / CGFloat(dt),
+                    dy: (paddle2.position.y - paddle2PrevPos.y) / CGFloat(dt)
+                )
+            }
+        }
+        lastUpdateTime = currentTime
+        paddle1PrevPos = paddle1.position
+        paddle2PrevPos = paddle2.position
+
         guard let puckPos = puck?.position, !isGameOver else { return }
 
         let midX = size.width / 2
