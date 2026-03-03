@@ -36,6 +36,10 @@ class AirHockeyScene: SKScene, SKPhysicsContactDelegate {
 
     private let puckFriction: CGFloat = 0.98
 
+    // Trail
+    private var trailTimer: TimeInterval = 0
+    private let trailInterval: TimeInterval = 0.016
+
     struct PhysicsCategory {
         static let puck: UInt32 = 0x1 << 0
         static let paddle: UInt32 = 0x1 << 1
@@ -66,30 +70,22 @@ class AirHockeyScene: SKScene, SKPhysicsContactDelegate {
         rink.zPosition = -1
         addChild(rink)
 
-        // Build walls with gaps for goals
         let halfGoal = goalWidth / 2
         let midX = size.width / 2
 
-        // Bottom wall - left segment
         addWallEdge(from: CGPoint(x: rinkInset, y: rinkInset),
                      to: CGPoint(x: midX - halfGoal, y: rinkInset))
-        // Bottom wall - right segment
         addWallEdge(from: CGPoint(x: midX + halfGoal, y: rinkInset),
                      to: CGPoint(x: size.width - rinkInset, y: rinkInset))
-        // Top wall - left segment
         addWallEdge(from: CGPoint(x: rinkInset, y: size.height - rinkInset),
                      to: CGPoint(x: midX - halfGoal, y: size.height - rinkInset))
-        // Top wall - right segment
         addWallEdge(from: CGPoint(x: midX + halfGoal, y: size.height - rinkInset),
                      to: CGPoint(x: size.width - rinkInset, y: size.height - rinkInset))
-        // Left wall
         addWallEdge(from: CGPoint(x: rinkInset, y: rinkInset),
                      to: CGPoint(x: rinkInset, y: size.height - rinkInset))
-        // Right wall
         addWallEdge(from: CGPoint(x: size.width - rinkInset, y: rinkInset),
                      to: CGPoint(x: size.width - rinkInset, y: size.height - rinkInset))
 
-        // Center line
         let centerPath = CGMutablePath()
         centerPath.move(to: CGPoint(x: rinkInset, y: size.height / 2))
         centerPath.addLine(to: CGPoint(x: size.width - rinkInset, y: size.height / 2))
@@ -112,7 +108,6 @@ class AirHockeyScene: SKScene, SKPhysicsContactDelegate {
     private func setupGoals() {
         let midX = size.width / 2
 
-        // Goal indicators (visual)
         for isTop in [false, true] {
             let y: CGFloat = isTop ? size.height - rinkInset : rinkInset
             let goalLine = SKShapeNode(rectOf: CGSize(width: goalWidth, height: 4), cornerRadius: 2)
@@ -155,6 +150,13 @@ class AirHockeyScene: SKScene, SKPhysicsContactDelegate {
         inner.strokeColor = .clear
         paddle.addChild(inner)
 
+        // Outer glow ring
+        let glow = SKShapeNode(circleOfRadius: paddleRadius + 6)
+        glow.fillColor = color.withAlphaComponent(0.08)
+        glow.strokeColor = .clear
+        glow.zPosition = -1
+        paddle.addChild(glow)
+
         paddle.physicsBody = SKPhysicsBody(circleOfRadius: paddleRadius)
         paddle.physicsBody?.isDynamic = false
         paddle.physicsBody?.categoryBitMask = PhysicsCategory.paddle
@@ -169,6 +171,14 @@ class AirHockeyScene: SKScene, SKPhysicsContactDelegate {
         puck.strokeColor = .white.withAlphaComponent(0.5)
         puck.lineWidth = 2
         puck.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        puck.zPosition = 10
+
+        // Puck glow
+        let glow = SKShapeNode(circleOfRadius: puckRadius + 4)
+        glow.fillColor = UIColor.white.withAlphaComponent(0.15)
+        glow.strokeColor = .clear
+        glow.zPosition = -1
+        puck.addChild(glow)
 
         puck.physicsBody = SKPhysicsBody(circleOfRadius: puckRadius)
         puck.physicsBody?.isDynamic = true
@@ -200,6 +210,34 @@ class AirHockeyScene: SKScene, SKPhysicsContactDelegate {
         score2Label.position = CGPoint(x: size.width / 2, y: size.height * 0.68)
         score2Label.zPosition = -1
         addChild(score2Label)
+    }
+
+    // MARK: - Puck Trail
+
+    private func spawnTrailParticle() {
+        guard let puckPos = puck?.position,
+              let velocity = puck?.physicsBody?.velocity else { return }
+
+        let speed = sqrt(velocity.dx * velocity.dx + velocity.dy * velocity.dy)
+        guard speed > 80 else { return }
+
+        let alpha = min(0.3, speed / 2000.0)
+        let trailSize = puckRadius * 0.5
+        let trail = SKShapeNode(circleOfRadius: trailSize)
+        trail.fillColor = UIColor.white.withAlphaComponent(CGFloat(alpha))
+        trail.strokeColor = .clear
+        trail.position = puckPos
+        trail.zPosition = 5
+        addChild(trail)
+
+        let fadeTime = 0.2
+        trail.run(SKAction.sequence([
+            SKAction.group([
+                SKAction.fadeOut(withDuration: fadeTime),
+                SKAction.scale(to: 0.1, duration: fadeTime)
+            ]),
+            SKAction.removeFromParent()
+        ]))
     }
 
     // MARK: - Touch Handling
@@ -266,13 +304,11 @@ class AirHockeyScene: SKScene, SKPhysicsContactDelegate {
             SoundManager.playHit()
             HapticManager.impact(.medium)
 
-            // Transfer paddle momentum to puck
             let paddleBody = contact.bodyA.categoryBitMask == PhysicsCategory.paddle ? contact.bodyA : contact.bodyB
             guard let paddleNode = paddleBody.node else { return }
 
             let paddleVel = paddleNode === paddle1 ? paddle1Velocity : paddle2Velocity
 
-            // Direction from paddle center to puck
             let dx = puck.position.x - paddleNode.position.x
             let dy = puck.position.y - paddleNode.position.y
             let dist = sqrt(dx * dx + dy * dy)
@@ -280,7 +316,6 @@ class AirHockeyScene: SKScene, SKPhysicsContactDelegate {
             let normX = dx / dist
             let normY = dy / dist
 
-            // Combine paddle speed with hit direction for realistic momentum
             let paddleSpeed = sqrt(paddleVel.dx * paddleVel.dx + paddleVel.dy * paddleVel.dy)
             let hitStrength = max(paddleSpeed * 1.8, 250)
             let maxHit: CGFloat = 1000
@@ -290,6 +325,24 @@ class AirHockeyScene: SKScene, SKPhysicsContactDelegate {
                 dx: normX * finalStrength + paddleVel.dx * 0.4,
                 dy: normY * finalStrength + paddleVel.dy * 0.4
             )
+
+            // Hit flash
+            let hitColor = paddleNode === paddle1
+                ? UIColor(red: 0.2, green: 0.5, blue: 1.0, alpha: 0.4)
+                : UIColor(red: 1.0, green: 0.3, blue: 0.3, alpha: 0.4)
+            let flash = SKShapeNode(circleOfRadius: puckRadius * 2.5)
+            flash.fillColor = hitColor
+            flash.strokeColor = .clear
+            flash.position = contact.contactPoint
+            flash.zPosition = 8
+            addChild(flash)
+            flash.run(SKAction.sequence([
+                SKAction.group([
+                    SKAction.fadeOut(withDuration: 0.2),
+                    SKAction.scale(to: 1.5, duration: 0.2)
+                ]),
+                SKAction.removeFromParent()
+            ]))
         } else if bodies.contains(PhysicsCategory.puck) && bodies.contains(PhysicsCategory.wall) {
             HapticManager.impact(.light)
         }
@@ -318,18 +371,21 @@ class AirHockeyScene: SKScene, SKPhysicsContactDelegate {
 
         guard let puckPos = puck?.position, !isGameOver else { return }
 
+        // Puck trail
+        if currentTime - trailTimer >= trailInterval {
+            trailTimer = currentTime
+            spawnTrailParticle()
+        }
+
         let midX = size.width / 2
         let halfGoal = goalWidth / 2
 
-        // Check if puck went through bottom goal
         if puckPos.y < rinkInset - puckRadius &&
            puckPos.x > midX - halfGoal && puckPos.x < midX + halfGoal {
             score2 += 1
             goalScored()
-        }
-        // Check if puck went through top goal
-        else if puckPos.y > size.height - rinkInset + puckRadius &&
-                puckPos.x > midX - halfGoal && puckPos.x < midX + halfGoal {
+        } else if puckPos.y > size.height - rinkInset + puckRadius &&
+                  puckPos.x > midX - halfGoal && puckPos.x < midX + halfGoal {
             score1 += 1
             goalScored()
         }
@@ -351,6 +407,18 @@ class AirHockeyScene: SKScene, SKPhysicsContactDelegate {
         gameDelegate?.scoreDidUpdate(player1: score1, player2: score2)
         SoundManager.playScore()
         HapticManager.notification(.success)
+
+        // Goal flash
+        let flash = SKShapeNode(rectOf: size)
+        flash.fillColor = .white.withAlphaComponent(0.1)
+        flash.strokeColor = .clear
+        flash.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        flash.zPosition = 100
+        addChild(flash)
+        flash.run(SKAction.sequence([
+            SKAction.fadeOut(withDuration: 0.3),
+            SKAction.removeFromParent()
+        ]))
 
         if score1 >= winScore {
             isGameOver = true

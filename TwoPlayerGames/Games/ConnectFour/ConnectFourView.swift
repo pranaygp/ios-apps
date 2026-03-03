@@ -13,57 +13,73 @@ struct ConnectFourView: View {
     @State private var lastDropColumn: Int?
     @State private var lastDropRow: Int?
     @State private var dropAnimating = false
+    @State private var winPulse = false
 
     private let columns = 7
     private let rows = 6
     private let settings = GameSettings.shared
 
     var body: some View {
-        ZStack {
-            Color(white: 0.06).ignoresSafeArea()
+        GameTransitionView {
+            ZStack {
+                Color(white: 0.06).ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                // Player 2 score (top, rotated)
-                ConnectFourScoreBanner(player: 2, score: score2, isTop: true)
+                VStack(spacing: 0) {
+                    // Player 2 score (top, rotated)
+                    FrostedScoreBanner(player: 2, score: score2, color: .yellow, isTop: true)
 
-                Spacer()
+                    Spacer()
 
-                // Turn indicator
-                if !showResult {
-                    HStack(spacing: 8) {
-                        Circle()
-                            .fill(currentPlayer == 1 ? Color.red : Color.yellow)
-                            .frame(width: 12, height: 12)
-                        Text("Player \(currentPlayer)'s Turn")
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundStyle(.white.opacity(0.6))
+                    // Turn indicator
+                    if !showResult {
+                        HStack(spacing: 8) {
+                            Circle()
+                                .fill(currentPlayer == 1 ? Color.red : Color.yellow)
+                                .frame(width: 12, height: 12)
+                                .shadow(color: (currentPlayer == 1 ? Color.red : Color.yellow).opacity(0.5), radius: 4)
+                            Text("Player \(currentPlayer)'s Turn")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundStyle(.white.opacity(0.6))
+                        }
+                        .padding(.bottom, 12)
+                        .transition(.opacity)
                     }
-                    .padding(.bottom, 12)
+
+                    // Board
+                    boardView
+                        .padding(.horizontal, 12)
+
+                    Spacer()
+
+                    // Player 1 score (bottom)
+                    FrostedScoreBanner(player: 1, score: score1, color: .red, isTop: false)
                 }
 
-                // Board
-                boardView
-                    .padding(.horizontal, 12)
+                GameOverlay {
+                    dismiss()
+                }
 
-                Spacer()
-
-                // Player 1 score (bottom)
-                ConnectFourScoreBanner(player: 1, score: score1, isTop: false)
-            }
-
-            GameOverlay {
-                dismiss()
-            }
-
-            if showResult {
-                resultOverlay
+                if showResult {
+                    if let winner {
+                        WinnerOverlay(winner: winner) {
+                            resetBoard()
+                        } onExit: {
+                            dismiss()
+                        }
+                    } else if isDraw {
+                        DrawOverlay {
+                            resetBoard()
+                        } onExit: {
+                            dismiss()
+                        }
+                    }
+                }
             }
         }
     }
 
     private var boardView: some View {
         VStack(spacing: 3) {
-            // Column tap targets at top
             HStack(spacing: 3) {
                 ForEach(0..<columns, id: \.self) { col in
                     Button {
@@ -100,6 +116,7 @@ struct ConnectFourView: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.blue.opacity(0.2), lineWidth: 1)
         )
+        .clipped()
     }
 
     private func cellView(row: Int, col: Int) -> some View {
@@ -112,7 +129,13 @@ struct ConnectFourView: View {
                 .fill(Color(white: 0.04))
                 .overlay(
                     Circle()
-                        .stroke(isWinning ? Color.white.opacity(0.6) : Color.white.opacity(0.06), lineWidth: isWinning ? 2 : 1)
+                        .stroke(
+                            isWinning
+                                ? Color.white.opacity(winPulse ? 0.8 : 0.3)
+                                : Color.white.opacity(0.06),
+                            lineWidth: isWinning ? 2.5 : 1
+                        )
+                        .animation(isWinning ? .easeInOut(duration: 0.6).repeatForever(autoreverses: true) : .default, value: winPulse)
                 )
 
             if value == 1 {
@@ -126,8 +149,13 @@ struct ConnectFourView: View {
                         )
                     )
                     .padding(4)
-                    .scaleEffect(isLastDrop && dropAnimating ? 1.0 : (isLastDrop ? 0.3 : 1.0))
-                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: dropAnimating)
+                    .shadow(color: isWinning ? Color.red.opacity(0.6) : Color.clear, radius: isWinning ? 6 : 0)
+                    .offset(y: isLastDrop && !dropAnimating ? -CGFloat(row + 2) * 52 : 0)
+                    .scaleEffect(isLastDrop && !dropAnimating ? 0.8 : 1.0)
+                    .animation(
+                        isLastDrop ? .interpolatingSpring(stiffness: 120, damping: 12) : .default,
+                        value: dropAnimating
+                    )
             } else if value == 2 {
                 Circle()
                     .fill(
@@ -139,8 +167,13 @@ struct ConnectFourView: View {
                         )
                     )
                     .padding(4)
-                    .scaleEffect(isLastDrop && dropAnimating ? 1.0 : (isLastDrop ? 0.3 : 1.0))
-                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: dropAnimating)
+                    .shadow(color: isWinning ? Color.yellow.opacity(0.6) : Color.clear, radius: isWinning ? 6 : 0)
+                    .offset(y: isLastDrop && !dropAnimating ? -CGFloat(row + 2) * 52 : 0)
+                    .scaleEffect(isLastDrop && !dropAnimating ? 0.8 : 1.0)
+                    .animation(
+                        isLastDrop ? .interpolatingSpring(stiffness: 120, damping: 12) : .default,
+                        value: dropAnimating
+                    )
             }
         }
         .aspectRatio(1, contentMode: .fit)
@@ -153,7 +186,6 @@ struct ConnectFourView: View {
     private func dropDisc(in col: Int) {
         guard winner == nil, !isDraw, canDrop(in: col) else { return }
 
-        // Find lowest empty row
         var targetRow = -1
         for row in stride(from: rows - 1, through: 0, by: -1) {
             if board[row][col] == 0 {
@@ -169,11 +201,18 @@ struct ConnectFourView: View {
 
         board[targetRow][col] = currentPlayer
         SoundManager.playDrop()
-        HapticManager.impact(.light)
+        HapticManager.impact(.medium)
 
-        // Trigger animation
+        // Trigger drop animation
         DispatchQueue.main.async {
-            dropAnimating = true
+            withAnimation {
+                dropAnimating = true
+            }
+        }
+
+        // Thud haptic when disc "lands"
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            HapticManager.impact(.heavy)
         }
 
         // Check win
@@ -183,7 +222,13 @@ struct ConnectFourView: View {
             if currentPlayer == 1 { score1 += 1 } else { score2 += 1 }
             SoundManager.playWin()
             HapticManager.notification(.success)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+
+            // Start win pulse
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                winPulse = true
+            }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                 showResult = true
             }
         } else if board[0].allSatisfy({ $0 != 0 }) {
@@ -205,7 +250,6 @@ struct ConnectFourView: View {
         for (dr, dc) in directions {
             var cells: [String] = ["\(row),\(col)"]
 
-            // Check forward
             for i in 1...3 {
                 let r = row + dr * i
                 let c = col + dc * i
@@ -213,7 +257,6 @@ struct ConnectFourView: View {
                 cells.append("\(r),\(c)")
             }
 
-            // Check backward
             for i in 1...3 {
                 let r = row - dr * i
                 let c = col - dc * i
@@ -228,65 +271,6 @@ struct ConnectFourView: View {
         return nil
     }
 
-    private var resultOverlay: some View {
-        ZStack {
-            Color.black.opacity(0.6)
-                .ignoresSafeArea()
-                .onTapGesture {}
-
-            VStack(spacing: 20) {
-                if let winner {
-                    Text("🏆")
-                        .font(.system(size: 48))
-                    Text("Player \(winner) Wins!")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                } else {
-                    Text("🤝")
-                        .font(.system(size: 48))
-                    Text("It's a Draw!")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                }
-
-                HStack(spacing: 14) {
-                    Button {
-                        HapticManager.impact(.medium)
-                        resetBoard()
-                    } label: {
-                        Text("Play Again")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 28)
-                            .padding(.vertical, 13)
-                            .background(RoundedRectangle(cornerRadius: 14).fill(.blue))
-                    }
-
-                    Button {
-                        HapticManager.impact(.light)
-                        dismiss()
-                    } label: {
-                        Text("Exit")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(.white.opacity(0.7))
-                            .padding(.horizontal, 28)
-                            .padding(.vertical, 13)
-                            .background(RoundedRectangle(cornerRadius: 14).fill(.white.opacity(0.1)))
-                    }
-                }
-            }
-            .padding(36)
-            .background(
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(Color(white: 0.1))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 24)
-                            .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                    )
-            )
-        }
-    }
-
     private func resetBoard() {
         withAnimation {
             board = Array(repeating: Array(repeating: 0, count: columns), count: rows)
@@ -297,36 +281,8 @@ struct ConnectFourView: View {
             showResult = false
             lastDropColumn = nil
             lastDropRow = nil
+            winPulse = false
         }
-    }
-}
-
-struct ConnectFourScoreBanner: View {
-    let player: Int
-    let score: Int
-    let isTop: Bool
-
-    var color: Color { player == 1 ? .red : .yellow }
-
-    var body: some View {
-        HStack {
-            HStack(spacing: 8) {
-                Circle()
-                    .fill(color)
-                    .frame(width: 14, height: 14)
-                Text("Player \(player)")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(color)
-            }
-            Spacer()
-            Text("\(score)")
-                .font(.system(size: 24, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
-        }
-        .padding(.horizontal, 24)
-        .padding(.vertical, 12)
-        .background(color.opacity(0.1))
-        .rotationEffect(isTop ? .degrees(180) : .zero)
     }
 }
 

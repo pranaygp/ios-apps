@@ -6,25 +6,25 @@ struct AirHockeyView: View {
     @StateObject private var gameState = AirHockeyGameState()
 
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
+        GameTransitionView {
+            ZStack {
+                Color.black.ignoresSafeArea()
 
-            GeometryReader { geo in
-                SpriteView(scene: gameState.makeScene(size: geo.size))
-                    .ignoresSafeArea()
-            }
+                GeometryReader { geo in
+                    SpriteView(scene: gameState.makeScene(size: geo.size))
+                        .ignoresSafeArea()
+                }
 
-            GameOverlay {
-                dismiss()
-            }
-
-            if let winner = gameState.winner {
-                WinnerOverlay(winner: winner) {
-                    HapticManager.impact(.medium)
-                    gameState.resetGame()
-                } onExit: {
-                    HapticManager.impact(.light)
+                GameOverlay {
                     dismiss()
+                }
+
+                if let winner = gameState.winner {
+                    WinnerOverlay(winner: winner) {
+                        gameState.resetGame()
+                    } onExit: {
+                        dismiss()
+                    }
                 }
             }
         }

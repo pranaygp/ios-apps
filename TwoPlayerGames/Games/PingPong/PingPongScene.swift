@@ -30,7 +30,11 @@ class PingPongScene: SKScene, SKPhysicsContactDelegate {
     private let ballRadius: CGFloat = 12
     private let paddleCornerRadius: CGFloat = 10
     private var initialBallSpeed: CGFloat { GameSettings.shared.pongInitialSpeed }
-    private let touchTargetPadding: CGFloat = 40  // extra touch area around paddles
+    private let touchTargetPadding: CGFloat = 40
+
+    // Trail
+    private var trailTimer: TimeInterval = 0
+    private let trailInterval: TimeInterval = 0.016 // ~60fps
 
     struct PhysicsCategory {
         static let ball: UInt32 = 0x1 << 0
@@ -56,7 +60,6 @@ class PingPongScene: SKScene, SKPhysicsContactDelegate {
     }
 
     private func setupWalls() {
-        // Only left and right walls — top and bottom are open for scoring
         let leftNode = SKNode()
         leftNode.physicsBody = SKPhysicsBody(edgeFrom: CGPoint(x: 0, y: 0), to: CGPoint(x: 0, y: size.height))
         leftNode.physicsBody?.categoryBitMask = PhysicsCategory.wall
@@ -103,6 +106,13 @@ class PingPongScene: SKScene, SKPhysicsContactDelegate {
         paddle1.physicsBody?.restitution = 1
         addChild(paddle1)
 
+        // Paddle glow
+        let glow1 = SKShapeNode(rectOf: CGSize(width: paddleWidth + 8, height: paddleHeight + 8), cornerRadius: paddleCornerRadius + 2)
+        glow1.fillColor = UIColor(red: 0.2, green: 0.5, blue: 1.0, alpha: 0.15)
+        glow1.strokeColor = .clear
+        glow1.zPosition = -1
+        paddle1.addChild(glow1)
+
         paddle2 = SKShapeNode(rectOf: paddleSize, cornerRadius: paddleCornerRadius)
         paddle2.fillColor = UIColor(red: 1.0, green: 0.3, blue: 0.3, alpha: 1.0)
         paddle2.strokeColor = .clear
@@ -113,6 +123,12 @@ class PingPongScene: SKScene, SKPhysicsContactDelegate {
         paddle2.physicsBody?.friction = 0
         paddle2.physicsBody?.restitution = 1
         addChild(paddle2)
+
+        let glow2 = SKShapeNode(rectOf: CGSize(width: paddleWidth + 8, height: paddleHeight + 8), cornerRadius: paddleCornerRadius + 2)
+        glow2.fillColor = UIColor(red: 1.0, green: 0.3, blue: 0.3, alpha: 0.15)
+        glow2.strokeColor = .clear
+        glow2.zPosition = -1
+        paddle2.addChild(glow2)
     }
 
     private func setupBall() {
@@ -120,12 +136,14 @@ class PingPongScene: SKScene, SKPhysicsContactDelegate {
         ball.fillColor = .white
         ball.strokeColor = .clear
         ball.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        ball.zPosition = 10
 
+        // Inner glow
         let glow = SKEffectNode()
         glow.shouldRasterize = true
-        glow.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 6.0])
-        let glowCircle = SKShapeNode(circleOfRadius: ballRadius + 2)
-        glowCircle.fillColor = .white.withAlphaComponent(0.3)
+        glow.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 8.0])
+        let glowCircle = SKShapeNode(circleOfRadius: ballRadius + 4)
+        glowCircle.fillColor = UIColor(red: 0.6, green: 0.8, blue: 1.0, alpha: 0.4)
         glowCircle.strokeColor = .clear
         glow.addChild(glowCircle)
         ball.addChild(glow)
@@ -159,6 +177,33 @@ class PingPongScene: SKScene, SKPhysicsContactDelegate {
         score2Label.position = CGPoint(x: size.width / 2, y: size.height * 0.75 - 20)
         score2Label.zPosition = -1
         addChild(score2Label)
+    }
+
+    // MARK: - Ball Trail
+
+    private func spawnTrailParticle() {
+        guard let ballPos = ball?.position,
+              let velocity = ball?.physicsBody?.velocity else { return }
+
+        let speed = sqrt(velocity.dx * velocity.dx + velocity.dy * velocity.dy)
+        guard speed > 50 else { return }
+
+        let trailSize = ballRadius * 0.6
+        let trail = SKShapeNode(circleOfRadius: trailSize)
+        trail.fillColor = UIColor(red: 0.5, green: 0.7, blue: 1.0, alpha: 0.25)
+        trail.strokeColor = .clear
+        trail.position = ballPos
+        trail.zPosition = 5
+        addChild(trail)
+
+        let fadeTime = 0.25
+        trail.run(SKAction.sequence([
+            SKAction.group([
+                SKAction.fadeOut(withDuration: fadeTime),
+                SKAction.scale(to: 0.2, duration: fadeTime)
+            ]),
+            SKAction.removeFromParent()
+        ]))
     }
 
     private func launchBall() {
@@ -224,7 +269,6 @@ class PingPongScene: SKScene, SKPhysicsContactDelegate {
             SoundManager.playHit()
             HapticManager.impact(.light)
 
-            // Determine which paddle was hit
             let paddleBody: SKPhysicsBody?
             if contact.bodyA.categoryBitMask == PhysicsCategory.paddle {
                 paddleBody = contact.bodyA
@@ -234,24 +278,43 @@ class PingPongScene: SKScene, SKPhysicsContactDelegate {
 
             guard let paddleNode = paddleBody?.node, let ballVelocity = ball.physicsBody?.velocity else { return }
 
-            // Calculate angle based on where ball hit the paddle
             let offset = ball.position.x - paddleNode.position.x
-            let normalizedOffset = offset / (paddleWidth / 2)  // -1 to 1
-            let maxBounceAngle: CGFloat = CGFloat.pi / 3  // 60 degrees max
+            let normalizedOffset = offset / (paddleWidth / 2)
+            let maxBounceAngle: CGFloat = CGFloat.pi / 3
             let bounceAngle = normalizedOffset * maxBounceAngle
 
-            // Maintain or slightly increase speed
             let currentSpeed = sqrt(ballVelocity.dx * ballVelocity.dx + ballVelocity.dy * ballVelocity.dy)
             let maxSpeed: CGFloat = 800
             let newSpeed = min(currentSpeed * 1.05, maxSpeed)
 
-            // Ball goes up if it hit paddle1 (bottom), down if paddle2 (top)
             let direction: CGFloat = paddleNode.position.y < size.height / 2 ? 1 : -1
             let dx = sin(bounceAngle) * newSpeed
             let dy = direction * cos(bounceAngle) * newSpeed
 
             ball.physicsBody?.velocity = CGVector(dx: dx, dy: dy)
+
+            // Hit flash effect
+            spawnHitFlash(at: contact.contactPoint, color: paddleNode === paddle1
+                ? UIColor(red: 0.2, green: 0.5, blue: 1.0, alpha: 0.6)
+                : UIColor(red: 1.0, green: 0.3, blue: 0.3, alpha: 0.6))
         }
+    }
+
+    private func spawnHitFlash(at point: CGPoint, color: UIColor) {
+        let flash = SKShapeNode(circleOfRadius: ballRadius * 2)
+        flash.fillColor = color
+        flash.strokeColor = .clear
+        flash.position = point
+        flash.zPosition = 8
+        addChild(flash)
+
+        flash.run(SKAction.sequence([
+            SKAction.group([
+                SKAction.fadeOut(withDuration: 0.2),
+                SKAction.scale(to: 2.0, duration: 0.2)
+            ]),
+            SKAction.removeFromParent()
+        ]))
     }
 
     // MARK: - Game Update
@@ -259,7 +322,13 @@ class PingPongScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         guard let ballY = ball?.position.y, !isGameOver else { return }
 
-        // Ensure minimum vertical velocity so ball doesn't go purely horizontal
+        // Spawn trail particles
+        if currentTime - trailTimer >= trailInterval {
+            trailTimer = currentTime
+            spawnTrailParticle()
+        }
+
+        // Ensure minimum vertical velocity
         if let velocity = ball.physicsBody?.velocity {
             let minVertical: CGFloat = 150
             if abs(velocity.dy) < minVertical && (abs(velocity.dx) > 1 || abs(velocity.dy) > 1) {
@@ -288,6 +357,18 @@ class PingPongScene: SKScene, SKPhysicsContactDelegate {
         score1Label.text = "\(score1)"
         score2Label.text = "\(score2)"
         gameDelegate?.scoreDidUpdate(player1: score1, player2: score2)
+
+        // Score flash effect
+        let flashNode = SKShapeNode(rectOf: size)
+        flashNode.fillColor = .white.withAlphaComponent(0.08)
+        flashNode.strokeColor = .clear
+        flashNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        flashNode.zPosition = 100
+        addChild(flashNode)
+        flashNode.run(SKAction.sequence([
+            SKAction.fadeOut(withDuration: 0.3),
+            SKAction.removeFromParent()
+        ]))
 
         ball.physicsBody?.velocity = .zero
         ball.position = CGPoint(x: size.width / 2, y: size.height / 2)

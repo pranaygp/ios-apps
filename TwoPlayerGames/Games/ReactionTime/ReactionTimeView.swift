@@ -4,12 +4,12 @@ struct ReactionTimeView: View {
     @Environment(\.dismiss) private var dismiss
 
     enum GamePhase {
-        case waiting     // Shows "Get Ready..."
-        case countdown   // Red screen, waiting for green
-        case go          // Green! Tap now!
-        case tooEarly    // Someone tapped during countdown
-        case scored      // Someone scored a point
-        case gameOver    // Game finished
+        case waiting
+        case countdown
+        case go
+        case tooEarly
+        case scored
+        case gameOver
     }
 
     @State private var phase: GamePhase = .waiting
@@ -21,40 +21,51 @@ struct ReactionTimeView: View {
     @State private var goTime: Date?
     @State private var reactionTime: TimeInterval?
     @State private var tooEarlyPlayer: Int?
+    @State private var flashOpacity: Double = 0
+    @State private var countdownNumber: Int = 3
+    @State private var showCountdownNumber = false
+    @State private var phaseColorAnimation = false
 
     private let settings = GameSettings.shared
     private var winScore: Int { settings.reactionTimeWinScore }
 
     var body: some View {
-        ZStack {
-            Color(white: 0.06).ignoresSafeArea()
+        GameTransitionView {
+            ZStack {
+                Color(white: 0.06).ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                // Player 2 zone (top, rotated)
-                playerZone(player: 2)
-                    .rotationEffect(.degrees(180))
+                VStack(spacing: 0) {
+                    // Player 2 zone (top, rotated)
+                    playerZone(player: 2)
+                        .rotationEffect(.degrees(180))
 
-                // Divider + status
-                centerStatus
+                    // Divider + status
+                    centerStatus
 
-                // Player 1 zone (bottom)
-                playerZone(player: 1)
+                    // Player 1 zone (bottom)
+                    playerZone(player: 1)
+                }
+
+                // GO flash effect
+                Color.green.opacity(flashOpacity)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+
+                GameOverlay {
+                    cleanup()
+                    dismiss()
+                }
+
+                if gameWinner != nil {
+                    gameOverOverlay
+                }
             }
-
-            GameOverlay {
+            .onAppear {
+                startRound()
+            }
+            .onDisappear {
                 cleanup()
-                dismiss()
             }
-
-            if gameWinner != nil {
-                gameOverOverlay
-            }
-        }
-        .onAppear {
-            startRound()
-        }
-        .onDisappear {
-            cleanup()
         }
     }
 
@@ -71,6 +82,7 @@ struct ReactionTimeView: View {
                 // Background color based on phase
                 zoneColor(for: player)
                     .ignoresSafeArea()
+                    .animation(.easeInOut(duration: 0.3), value: phaseColorAnimation)
 
                 VStack(spacing: 12) {
                     Text("Player \(player)")
@@ -82,25 +94,53 @@ struct ReactionTimeView: View {
                     Text("\(score)")
                         .font(.system(size: 56, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
+                        .contentTransition(.numericText())
 
                     if phase == .scored && roundWinner == player {
                         if let rt = reactionTime {
-                            Text("\(Int(rt * 1000))ms")
-                                .font(.system(size: 20, weight: .semibold, design: .monospaced))
-                                .foregroundStyle(.green)
+                            VStack(spacing: 4) {
+                                Text("\(Int(rt * 1000))ms")
+                                    .font(.system(size: 28, weight: .bold, design: .monospaced))
+                                    .foregroundStyle(.green)
+
+                                Text(reactionRating(rt))
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundStyle(.green.opacity(0.7))
+                            }
+                            .transition(.scale.combined(with: .opacity))
                         }
                     }
 
                     if phase == .tooEarly && tooEarlyPlayer == player {
                         Text("Too early!")
-                            .font(.system(size: 18, weight: .semibold))
+                            .font(.system(size: 20, weight: .bold))
                             .foregroundStyle(.red)
+                            .transition(.scale.combined(with: .opacity))
+                    }
+
+                    // Countdown number overlay
+                    if showCountdownNumber && phase == .waiting {
+                        Text("\(countdownNumber)")
+                            .font(.system(size: 72, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.15))
+                            .transition(.scale.combined(with: .opacity))
                     }
                 }
+                .animation(.spring(response: 0.3, dampingFraction: 0.7), value: phase)
             }
         }
         .buttonStyle(.plain)
         .disabled(!canTap)
+    }
+
+    private func reactionRating(_ time: TimeInterval) -> String {
+        let ms = time * 1000
+        if ms < 150 { return "Inhuman!" }
+        if ms < 200 { return "Lightning fast!" }
+        if ms < 250 { return "Great reflexes!" }
+        if ms < 350 { return "Pretty quick!" }
+        if ms < 500 { return "Not bad!" }
+        return "Keep practicing!"
     }
 
     private func zoneColor(for player: Int) -> some View {
@@ -109,9 +149,17 @@ struct ReactionTimeView: View {
             case .waiting:
                 Color(white: 0.08)
             case .countdown:
-                Color(red: 0.4, green: 0.08, blue: 0.08)
+                LinearGradient(
+                    colors: [Color(red: 0.4, green: 0.08, blue: 0.08), Color(red: 0.3, green: 0.04, blue: 0.04)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
             case .go:
-                Color(red: 0.05, green: 0.4, blue: 0.12)
+                LinearGradient(
+                    colors: [Color(red: 0.05, green: 0.45, blue: 0.15), Color(red: 0.02, green: 0.3, blue: 0.08)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
             case .tooEarly:
                 if tooEarlyPlayer == player {
                     Color(red: 0.5, green: 0.1, blue: 0.1)
@@ -120,7 +168,11 @@ struct ReactionTimeView: View {
                 }
             case .scored:
                 if roundWinner == player {
-                    Color(red: 0.05, green: 0.25, blue: 0.08)
+                    LinearGradient(
+                        colors: [Color(red: 0.05, green: 0.3, blue: 0.1), Color(red: 0.02, green: 0.2, blue: 0.05)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
                 } else {
                     Color(white: 0.08)
                 }
@@ -135,35 +187,65 @@ struct ReactionTimeView: View {
     private var centerStatus: some View {
         ZStack {
             Rectangle()
-                .fill(Color.white.opacity(0.08))
-                .frame(height: 60)
+                .fill(.ultraThinMaterial)
+                .environment(\.colorScheme, .dark)
+                .frame(height: 64)
+                .overlay(
+                    Rectangle()
+                        .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
+                )
 
-            switch phase {
-            case .waiting:
-                Text("Get Ready...")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.6))
-            case .countdown:
-                Text("WAIT...")
-                    .font(.system(size: 22, weight: .bold))
-                    .foregroundStyle(.red)
-            case .go:
-                Text("TAP NOW!")
-                    .font(.system(size: 22, weight: .bold))
-                    .foregroundStyle(.green)
-            case .tooEarly:
-                Text("Too Early!")
-                    .font(.system(size: 22, weight: .bold))
-                    .foregroundStyle(.orange)
-            case .scored:
-                if let winner = roundWinner {
-                    Text("Player \(winner) scores!")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.green)
+            HStack {
+                // Player 1 score pill
+                Text("\(score1)")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(width: 36, height: 36)
+                    .background(Circle().fill(Color.blue.opacity(0.3)))
+
+                Spacer()
+
+                // Phase text
+                Group {
+                    switch phase {
+                    case .waiting:
+                        Text("Get Ready...")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(.white.opacity(0.6))
+                    case .countdown:
+                        Text("WAIT...")
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundStyle(.red)
+                    case .go:
+                        Text("TAP NOW!")
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundStyle(.green)
+                    case .tooEarly:
+                        Text("Too Early!")
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundStyle(.orange)
+                    case .scored:
+                        if let winner = roundWinner {
+                            Text("P\(winner) scores!")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundStyle(.green)
+                        }
+                    case .gameOver:
+                        EmptyView()
+                    }
                 }
-            case .gameOver:
-                EmptyView()
+                .animation(.easeInOut(duration: 0.2), value: phase)
+
+                Spacer()
+
+                // Player 2 score pill
+                Text("\(score2)")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(width: 36, height: 36)
+                    .background(Circle().fill(Color.red.opacity(0.3)))
             }
+            .padding(.horizontal, 20)
         }
     }
 
@@ -174,10 +256,14 @@ struct ReactionTimeView: View {
         roundWinner = nil
         reactionTime = nil
         tooEarlyPlayer = nil
+        phaseColorAnimation.toggle()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             guard phase == .waiting else { return }
-            phase = .countdown
+            withAnimation {
+                phase = .countdown
+                phaseColorAnimation.toggle()
+            }
             SoundManager.playCountdown()
             HapticManager.impact(.light)
 
@@ -186,10 +272,21 @@ struct ReactionTimeView: View {
             countdownTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { _ in
                 DispatchQueue.main.async {
                     guard phase == .countdown else { return }
-                    phase = .go
+                    withAnimation(.easeInOut(duration: 0.1)) {
+                        phase = .go
+                        phaseColorAnimation.toggle()
+                    }
                     goTime = Date()
                     SoundManager.playGo()
                     HapticManager.notification(.success)
+
+                    // Flash effect
+                    withAnimation(.easeOut(duration: 0.1)) {
+                        flashOpacity = 0.3
+                    }
+                    withAnimation(.easeOut(duration: 0.3).delay(0.1)) {
+                        flashOpacity = 0
+                    }
                 }
             }
         }
@@ -198,31 +295,34 @@ struct ReactionTimeView: View {
     private func handleTap(player: Int) {
         switch phase {
         case .countdown:
-            // Tapped too early
             countdownTimer?.invalidate()
             countdownTimer = nil
             tooEarlyPlayer = player
-            phase = .tooEarly
+            withAnimation {
+                phase = .tooEarly
+                phaseColorAnimation.toggle()
+            }
             HapticManager.notification(.error)
 
-            // Other player gets the point
             let otherPlayer = player == 1 ? 2 : 1
-            if otherPlayer == 1 { score1 += 1 } else { score2 += 1 }
+            withAnimation { if otherPlayer == 1 { score1 += 1 } else { score2 += 1 } }
             roundWinner = otherPlayer
 
             checkGameOver(afterDelay: 1.5)
 
         case .go:
-            // Valid tap!
             guard let start = goTime else { return }
             reactionTime = Date().timeIntervalSince(start)
             roundWinner = player
-            if player == 1 { score1 += 1 } else { score2 += 1 }
-            phase = .scored
+            withAnimation { if player == 1 { score1 += 1 } else { score2 += 1 } }
+            withAnimation {
+                phase = .scored
+                phaseColorAnimation.toggle()
+            }
             SoundManager.playScore()
             HapticManager.notification(.success)
 
-            checkGameOver(afterDelay: 1.5)
+            checkGameOver(afterDelay: 2.0)
 
         default:
             break
@@ -266,10 +366,8 @@ struct ReactionTimeView: View {
 
     private var gameOverOverlay: some View {
         WinnerOverlay(winner: gameWinner ?? 1) {
-            HapticManager.impact(.medium)
             resetGame()
         } onExit: {
-            HapticManager.impact(.light)
             cleanup()
             dismiss()
         }

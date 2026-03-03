@@ -18,110 +18,75 @@ struct TicTacToeView: View {
     ]
 
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
+        GameTransitionView {
+            ZStack {
+                Color.black.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                // Player O score (top, rotated 180)
-                ScoreBanner(player: "O", score: scoreO, color: .red, isTop: true)
+                VStack(spacing: 0) {
+                    // Player O score (top, rotated 180)
+                    FrostedScoreBanner(player: 2, score: scoreO, color: .red, isTop: true)
 
-                Spacer()
+                    Spacer()
 
-                // Board
-                VStack(spacing: 4) {
-                    ForEach(0..<3, id: \.self) { row in
-                        HStack(spacing: 4) {
-                            ForEach(0..<3, id: \.self) { col in
-                                let index = row * 3 + col
-                                CellView(
-                                    value: board[index],
-                                    isWinning: winningLine?.contains(index) == true
-                                ) {
-                                    placeMark(at: index)
+                    // Board
+                    VStack(spacing: 4) {
+                        ForEach(0..<3, id: \.self) { row in
+                            HStack(spacing: 4) {
+                                ForEach(0..<3, id: \.self) { col in
+                                    let index = row * 3 + col
+                                    CellView(
+                                        value: board[index],
+                                        isWinning: winningLine?.contains(index) == true
+                                    ) {
+                                        placeMark(at: index)
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                .padding(20)
+                    .padding(20)
 
-                // Turn indicator
-                if !showResult {
-                    Text("\(isXTurn ? "X" : "O")'s Turn")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(isXTurn ? Color.blue : Color.red)
+                    // Turn indicator
+                    if !showResult {
+                        HStack(spacing: 8) {
+                            Circle()
+                                .fill(isXTurn ? Color.blue : Color.red)
+                                .frame(width: 10, height: 10)
+                                .shadow(color: (isXTurn ? Color.blue : Color.red).opacity(0.5), radius: 4)
+                            Text("\(isXTurn ? "X" : "O")'s Turn")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundStyle(isXTurn ? Color.blue : Color.red)
+                        }
                         .padding(.bottom, 8)
-                }
-
-                Spacer()
-
-                // Player X score (bottom)
-                ScoreBanner(player: "X", score: scoreX, color: .blue, isTop: false)
-            }
-
-            // Back button
-            GameOverlay {
-                dismiss()
-            }
-
-            if showResult {
-                resultOverlay
-            }
-        }
-    }
-
-    private var resultOverlay: some View {
-        ZStack {
-            Color.black.opacity(0.6)
-                .ignoresSafeArea()
-                .onTapGesture {}
-
-            VStack(spacing: 20) {
-                if let winner {
-                    Text("🏆")
-                        .font(.system(size: 48))
-                    Text("Player \(winner) Wins!")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundStyle(.white)
-                } else {
-                    Text("🤝")
-                        .font(.system(size: 48))
-                    Text("It's a Draw!")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundStyle(.white)
-                }
-
-                HStack(spacing: 16) {
-                    Button {
-                        HapticManager.impact(.light)
-                        resetBoard()
-                    } label: {
-                        Text("Play Again")
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 28)
-                            .padding(.vertical, 12)
-                            .background(RoundedRectangle(cornerRadius: 14).fill(.blue))
+                        .transition(.opacity)
                     }
 
-                    Button {
-                        HapticManager.impact(.light)
-                        dismiss()
-                    } label: {
-                        Text("Exit")
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 28)
-                            .padding(.vertical, 12)
-                            .background(RoundedRectangle(cornerRadius: 14).fill(.white.opacity(0.15)))
+                    Spacer()
+
+                    // Player X score (bottom)
+                    FrostedScoreBanner(player: 1, score: scoreX, color: .blue, isTop: false)
+                }
+
+                GameOverlay {
+                    dismiss()
+                }
+
+                if showResult {
+                    if let winner {
+                        WinnerOverlay(winner: winner == "X" ? 1 : 2) {
+                            resetBoard()
+                        } onExit: {
+                            dismiss()
+                        }
+                    } else if isDraw {
+                        DrawOverlay {
+                            resetBoard()
+                        } onExit: {
+                            dismiss()
+                        }
                     }
                 }
             }
-            .padding(36)
-            .background(
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(Color(white: 0.12))
-            )
         }
     }
 
@@ -182,47 +147,34 @@ struct CellView: View {
     let isWinning: Bool
     let action: () -> Void
 
+    @State private var pulse = false
+
     var body: some View {
         Button(action: action) {
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(isWinning ? Color.yellow.opacity(0.2) : Color.white.opacity(0.06))
+                    .fill(isWinning ? Color.yellow.opacity(0.15) : Color.white.opacity(0.06))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(isWinning ? Color.yellow.opacity(0.5) : Color.white.opacity(0.1), lineWidth: 1)
+                            .stroke(
+                                isWinning ? Color.yellow.opacity(pulse ? 0.7 : 0.3) : Color.white.opacity(0.1),
+                                lineWidth: isWinning ? 2 : 1
+                            )
+                            .animation(isWinning ? .easeInOut(duration: 0.6).repeatForever(autoreverses: true) : .default, value: pulse)
                     )
 
                 Text(value)
                     .font(.system(size: 44, weight: .bold, design: .rounded))
                     .foregroundStyle(value == "X" ? Color.blue : Color.red)
+                    .shadow(color: (value == "X" ? Color.blue : Color.red).opacity(isWinning ? 0.5 : 0), radius: 8)
             }
         }
         .frame(maxWidth: .infinity)
         .aspectRatio(1, contentMode: .fit)
         .buttonStyle(.plain)
-    }
-}
-
-struct ScoreBanner: View {
-    let player: String
-    let score: Int
-    let color: Color
-    let isTop: Bool
-
-    var body: some View {
-        HStack {
-            Text("Player \(player)")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(color)
-            Spacer()
-            Text("\(score)")
-                .font(.system(size: 24, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+        .onChange(of: isWinning) { _, newVal in
+            if newVal { pulse = true }
         }
-        .padding(.horizontal, 24)
-        .padding(.vertical, 12)
-        .background(color.opacity(0.1))
-        .rotationEffect(isTop ? .degrees(180) : .zero)
     }
 }
 

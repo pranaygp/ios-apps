@@ -97,7 +97,6 @@ struct HomeView: View {
         }
         .fullScreenCover(item: $selectedGame) { game in
             gameView(for: game)
-                .transition(.opacity)
         }
         .sheet(isPresented: $showSettings) {
             SettingsView()
@@ -108,7 +107,6 @@ struct HomeView: View {
         ZStack {
             Color(white: 0.06).ignoresSafeArea()
 
-            // Subtle gradient orbs
             Circle()
                 .fill(
                     RadialGradient(
@@ -164,7 +162,12 @@ struct HomeView: View {
                         .frame(width: 44, height: 44)
                         .background(
                             Circle()
-                                .fill(Color.white.opacity(0.08))
+                                .fill(.ultraThinMaterial)
+                                .environment(\.colorScheme, .dark)
+                        )
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white.opacity(0.08), lineWidth: 1)
                         )
                 }
             }
@@ -219,6 +222,7 @@ struct GameCardView: View {
                         )
                     )
                     .frame(width: 56, height: 56)
+                    .shadow(color: game.gradient[0].opacity(0.3), radius: 8, y: 2)
 
                 Image(systemName: game.icon)
                     .font(.system(size: 22, weight: .semibold))
@@ -244,7 +248,13 @@ struct GameCardView: View {
         .padding(14)
         .background(
             RoundedRectangle(cornerRadius: 18)
-                .fill(Color.white.opacity(0.06))
+                .fill(.ultraThinMaterial)
+                .environment(\.colorScheme, .dark)
+                .opacity(0.5)
+        )
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(Color.white.opacity(0.03))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 18)
