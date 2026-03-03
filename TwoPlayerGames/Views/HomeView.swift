@@ -87,6 +87,7 @@ struct HomeView: View {
                             } label: {
                                 GameCardView(game: game)
                             }
+                            .accessibilityLabel("\(game.title): \(game.subtitle)")
                             .buttonStyle(GameCardButtonStyle())
                             .opacity(animateCards ? 1 : 0)
                             .offset(y: animateCards ? (floatingPhase ? -1.5 : 1.5) : 20)
@@ -201,6 +202,7 @@ struct HomeView: View {
                                 .stroke(Color.white.opacity(0.08), lineWidth: 1)
                         )
                 }
+                .accessibilityLabel("Settings")
             }
             .padding(.horizontal, 24)
 

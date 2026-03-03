@@ -188,6 +188,7 @@ struct SimonSaysView: View {
         .aspectRatio(1.4, contentMode: .fit)
         .buttonStyle(.plain)
         .disabled(!isActive)
+        .accessibilityLabel("Simon button \(index + 1)")
         .scaleEffect(isLit ? 1.08 : 1.0)
         .animation(.easeOut(duration: 0.12), value: isLit)
     }

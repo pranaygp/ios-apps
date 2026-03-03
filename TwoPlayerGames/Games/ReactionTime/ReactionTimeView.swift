@@ -131,6 +131,8 @@ struct ReactionTimeView: View {
         }
         .buttonStyle(.plain)
         .disabled(!canTap)
+        .accessibilityLabel("Player \(player) zone, score \(score)")
+        .accessibilityHint(canTap ? "Tap when the screen turns green" : "")
     }
 
     private func reactionRating(_ time: TimeInterval) -> String {

@@ -16,6 +16,7 @@ struct SettingsView: View {
 
                 Section {
                     Stepper("Win Score: \(settings.pingPongWinScore)", value: $settings.pingPongWinScore, in: 1...15)
+                        .accessibilityValue("\(settings.pingPongWinScore)")
 
                     Picker("Ball Speed", selection: $settings.pongBallSpeed) {
                         Text("Slow").tag(0)
@@ -28,32 +29,69 @@ struct SettingsView: View {
 
                 Section {
                     Stepper("Win Score: \(settings.airHockeyWinScore)", value: $settings.airHockeyWinScore, in: 1...15)
+                        .accessibilityValue("\(settings.airHockeyWinScore)")
                 } header: {
                     Text("Air Hockey")
                 }
 
                 Section {
                     Stepper("Rounds to Win: \(settings.ticTacToeWinScore)", value: $settings.ticTacToeWinScore, in: 1...10)
+                        .accessibilityValue("\(settings.ticTacToeWinScore)")
                 } header: {
                     Text("Tic Tac Toe")
                 }
 
                 Section {
                     Stepper("Rounds to Win: \(settings.connectFourWinScore)", value: $settings.connectFourWinScore, in: 1...10)
+                        .accessibilityValue("\(settings.connectFourWinScore)")
                 } header: {
                     Text("Connect Four")
                 }
 
                 Section {
                     Stepper("Win Score: \(settings.reactionTimeWinScore)", value: $settings.reactionTimeWinScore, in: 1...15)
+                        .accessibilityValue("\(settings.reactionTimeWinScore)")
                 } header: {
                     Text("Reaction Time")
                 }
 
                 Section {
                     Stepper("Rounds to Win: \(settings.simonSaysWinScore)", value: $settings.simonSaysWinScore, in: 1...10)
+                        .accessibilityValue("\(settings.simonSaysWinScore)")
                 } header: {
                     Text("Simon Says")
+                }
+
+                Section {
+                    HStack {
+                        Text("Version")
+                        Spacer()
+                        Text(appVersion)
+                            .foregroundStyle(.secondary)
+                    }
+                    .accessibilityElement(children: .combine)
+
+                    Link(destination: URL(string: "https://github.com/pranaygp/ios-apps")!) {
+                        HStack {
+                            Text("Source Code")
+                            Spacer()
+                            Image(systemName: "arrow.up.right.square")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .accessibilityLabel("Source code on GitHub")
+
+                    HStack {
+                        Spacer()
+                        Text("Made with ❤️ by Pranay")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                    }
+                    .listRowBackground(Color.clear)
+                    .accessibilityLabel("Made with love by Pranay")
+                } header: {
+                    Text("About")
                 }
             }
             .navigationTitle("Settings")
@@ -66,6 +104,12 @@ struct SettingsView: View {
                 }
             }
         }
+    }
+
+    private var appVersion: String {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
+        return "\(version) (\(build))"
     }
 }
 

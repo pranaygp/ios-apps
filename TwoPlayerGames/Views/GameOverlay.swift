@@ -24,6 +24,7 @@ struct GameOverlay: View {
                                 .stroke(Color.white.opacity(0.1), lineWidth: 1)
                         )
                 }
+                .accessibilityLabel("Close game")
                 .padding(16)
 
                 Spacer()
@@ -62,6 +63,8 @@ struct FrostedScoreBanner: View {
                 .scaleEffect(scoreScale)
                 .contentTransition(.numericText())
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Player \(player) score: \(animatedScore)")
         .padding(.horizontal, 24)
         .padding(.vertical, 14)
         .background(
@@ -143,6 +146,7 @@ struct WinnerOverlay: View {
                         .font(.system(size: 64))
                         .scaleEffect(showContent ? 1 : 0.1)
                         .offset(y: trophyBounce ? 0 : -8)
+                        .accessibilityLabel("Trophy")
                 }
                 .animation(.spring(response: 0.5, dampingFraction: 0.5), value: showContent)
 
@@ -191,6 +195,7 @@ struct WinnerOverlay: View {
                                 .shadow(color: winnerColor.opacity(0.4), radius: 8, y: 4)
                         )
                     }
+                    .accessibilityLabel("Play Again")
 
                     Button(action: {
                         HapticManager.impact(.light)
@@ -214,6 +219,7 @@ struct WinnerOverlay: View {
                                 )
                         )
                     }
+                    .accessibilityLabel("Go to Home")
                 }
                 .opacity(showContent ? 1 : 0)
                 .offset(y: showContent ? 0 : 20)
@@ -277,6 +283,7 @@ struct DrawOverlay: View {
                 Text("\u{1F91D}")
                     .font(.system(size: 56))
                     .scaleEffect(showContent ? 1 : 0.3)
+                    .accessibilityLabel("Handshake")
 
                 Text("It's a Draw!")
                     .font(.system(size: 28, weight: .bold, design: .rounded))

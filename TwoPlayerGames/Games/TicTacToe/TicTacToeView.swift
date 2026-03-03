@@ -172,6 +172,8 @@ struct CellView: View {
         .frame(maxWidth: .infinity)
         .aspectRatio(1, contentMode: .fit)
         .buttonStyle(.plain)
+        .accessibilityLabel(value.isEmpty ? "Empty cell" : value)
+        .accessibilityHint(value.isEmpty ? "Tap to place your mark" : "")
         .onChange(of: isWinning) { _, newVal in
             if newVal { pulse = true }
         }

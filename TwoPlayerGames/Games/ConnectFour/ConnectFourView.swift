@@ -104,6 +104,8 @@ struct ConnectFourView: View {
                     }
                     .buttonStyle(.plain)
                     .disabled(!canDrop(in: col) || showResult)
+                    .accessibilityLabel("Column \(col + 1)")
+                    .accessibilityHint(canDrop(in: col) && !showResult ? "Tap to drop disc" : "")
                 }
             }
         }
