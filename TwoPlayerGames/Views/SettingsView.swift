@@ -63,6 +63,13 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Stepper("Rounds to Win: \(settings.tugOfWarWinScore)", value: $settings.tugOfWarWinScore, in: 1...10)
+                        .accessibilityValue("\(settings.tugOfWarWinScore)")
+                } header: {
+                    Text("Tug of War")
+                }
+
+                Section {
                     HStack {
                         Text("Version")
                         Spacer()
@@ -83,7 +90,7 @@ struct SettingsView: View {
 
                     HStack {
                         Spacer()
-                        Text("Made with ❤️ by Pranay")
+                        Text("Made with \u{2764}\u{FE0F} by Pranay")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                         Spacer()

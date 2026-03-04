@@ -3,15 +3,20 @@ import GameKit
 
 struct GameOverlay: View {
     let onBack: () -> Void
+    var onPause: (() -> Void)? = nil
 
     var body: some View {
         VStack {
             HStack {
                 Button(action: {
                     HapticManager.impact(.light)
-                    onBack()
+                    if let onPause {
+                        onPause()
+                    } else {
+                        onBack()
+                    }
                 }) {
-                    Image(systemName: "xmark")
+                    Image(systemName: onPause != nil ? "pause.fill" : "xmark")
                         .font(.system(size: 14, weight: .bold))
                         .foregroundStyle(.white.opacity(0.6))
                         .frame(width: 32, height: 32)
@@ -25,13 +30,167 @@ struct GameOverlay: View {
                                 .stroke(Color.white.opacity(0.1), lineWidth: 1)
                         )
                 }
-                .accessibilityLabel("Close game")
+                .accessibilityLabel(onPause != nil ? "Pause game" : "Close game")
                 .padding(16)
 
                 Spacer()
             }
             Spacer()
         }
+    }
+}
+
+// MARK: - Pause Overlay
+
+struct PauseOverlay: View {
+    let score1: Int
+    let score2: Int
+    let player1Color: Color
+    let player2Color: Color
+    let onResume: () -> Void
+    let onRestart: () -> Void
+    let onExit: () -> Void
+
+    @State private var showContent = false
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(showContent ? 0.8 : 0)
+                .ignoresSafeArea()
+                .animation(.easeOut(duration: 0.3), value: showContent)
+
+            VStack(spacing: 24) {
+                // Pause icon
+                Image(systemName: "pause.circle.fill")
+                    .font(.system(size: 48))
+                    .foregroundStyle(.white.opacity(0.6))
+                    .scaleEffect(showContent ? 1 : 0.5)
+
+                Text("Paused")
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+
+                // Score display
+                HStack(spacing: 24) {
+                    VStack(spacing: 4) {
+                        Circle()
+                            .fill(player1Color)
+                            .frame(width: 12, height: 12)
+                        Text("P1")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(.white.opacity(0.5))
+                        Text("\(score1)")
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                    }
+
+                    Text("—")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(.white.opacity(0.3))
+
+                    VStack(spacing: 4) {
+                        Circle()
+                            .fill(player2Color)
+                            .frame(width: 12, height: 12)
+                        Text("P2")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(.white.opacity(0.5))
+                        Text("\(score2)")
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                    }
+                }
+                .padding(.vertical, 8)
+
+                // Buttons
+                VStack(spacing: 10) {
+                    Button(action: {
+                        HapticManager.impact(.medium)
+                        SoundManager.playButtonTap()
+                        onResume()
+                    }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "play.fill")
+                                .font(.system(size: 14, weight: .bold))
+                            Text("Resume")
+                                .font(.system(size: 16, weight: .semibold))
+                        }
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 14)
+                                .fill(.blue)
+                                .shadow(color: .blue.opacity(0.3), radius: 8, y: 4)
+                        )
+                    }
+                    .accessibilityLabel("Resume game")
+
+                    Button(action: {
+                        HapticManager.impact(.medium)
+                        SoundManager.playButtonTap()
+                        onRestart()
+                    }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "arrow.counterclockwise")
+                                .font(.system(size: 14, weight: .bold))
+                            Text("Restart")
+                                .font(.system(size: 16, weight: .semibold))
+                        }
+                        .foregroundStyle(.white.opacity(0.7))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 14)
+                                .fill(Color.white.opacity(0.1))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 14)
+                                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                )
+                        )
+                    }
+                    .accessibilityLabel("Restart game")
+
+                    Button(action: {
+                        HapticManager.impact(.light)
+                        SoundManager.playButtonTap()
+                        onExit()
+                    }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "house.fill")
+                                .font(.system(size: 14, weight: .bold))
+                            Text("Exit to Menu")
+                                .font(.system(size: 16, weight: .semibold))
+                        }
+                        .foregroundStyle(.white.opacity(0.5))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 14)
+                                .fill(Color.white.opacity(0.05))
+                        )
+                    }
+                    .accessibilityLabel("Exit to menu")
+                }
+                .padding(.horizontal, 8)
+            }
+            .padding(32)
+            .frame(maxWidth: 280)
+            .background(
+                RoundedRectangle(cornerRadius: 28)
+                    .fill(.ultraThinMaterial)
+                    .environment(\.colorScheme, .dark)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 28)
+                            .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                    )
+                    .shadow(color: .black.opacity(0.3), radius: 30, y: 10)
+            )
+            .scaleEffect(showContent ? 1 : 0.8)
+            .opacity(showContent ? 1 : 0)
+            .animation(.spring(response: 0.4, dampingFraction: 0.75), value: showContent)
+        }
+        .onAppear { showContent = true }
     }
 }
 
@@ -98,6 +257,7 @@ struct FrostedScoreBanner: View {
 struct WinnerOverlay: View {
     let winner: Int
     var gameType: GameCenterManager.GameType? = nil
+    var gameName: String? = nil
     let onPlayAgain: () -> Void
     let onExit: () -> Void
 
@@ -267,6 +427,11 @@ struct WinnerOverlay: View {
             // Report win to Game Center
             if let gameType {
                 GameCenterManager.shared.reportWin(for: gameType)
+            }
+
+            // Report win to session tracker
+            if let gameName {
+                SessionTracker.shared.recordWin(player: winner, gameType: gameName)
             }
         }
     }

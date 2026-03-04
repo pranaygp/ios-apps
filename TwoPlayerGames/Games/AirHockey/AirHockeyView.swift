@@ -3,7 +3,9 @@ import SpriteKit
 
 struct AirHockeyView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var gameState = AirHockeyGameState()
+    @State private var isPaused = false
 
     var body: some View {
         GameTransitionView {
@@ -15,17 +17,42 @@ struct AirHockeyView: View {
                         .ignoresSafeArea()
                 }
 
-                GameOverlay {
-                    dismiss()
-                }
+                GameOverlay(onBack: { dismiss() }, onPause: {
+                    isPaused = true
+                    gameState.pauseScene()
+                })
 
                 if let winner = gameState.winner {
-                    WinnerOverlay(winner: winner, gameType: .airHockey) {
+                    WinnerOverlay(winner: winner, gameType: .airHockey, gameName: "Air Hockey") {
                         gameState.resetGame()
                     } onExit: {
                         dismiss()
                     }
                 }
+
+                if isPaused && gameState.winner == nil {
+                    PauseOverlay(
+                        score1: gameState.score1,
+                        score2: gameState.score2,
+                        player1Color: .blue,
+                        player2Color: .red,
+                        onResume: {
+                            isPaused = false
+                            gameState.resumeScene()
+                        },
+                        onRestart: {
+                            isPaused = false
+                            gameState.resetGame()
+                        },
+                        onExit: { dismiss() }
+                    )
+                }
+            }
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase != .active && gameState.winner == nil {
+                isPaused = true
+                gameState.pauseScene()
             }
         }
     }
@@ -62,7 +89,16 @@ class AirHockeyGameState: ObservableObject, AirHockeySceneDelegate {
 
     func resetGame() {
         winner = nil
+        scene?.isPaused = false
         scene?.resetGame()
+    }
+
+    func pauseScene() {
+        scene?.isPaused = true
+    }
+
+    func resumeScene() {
+        scene?.isPaused = false
     }
 }
 

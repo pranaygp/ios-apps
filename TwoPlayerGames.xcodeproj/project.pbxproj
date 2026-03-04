@@ -25,6 +25,10 @@
 		A10000016 /* ReactionTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000016; };
 		A10000017 /* SimonSaysView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000017; };
 		A10000018 /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000018; };
+		A10000019 /* SessionTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000020; };
+		A10000020 /* TugOfWarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000021; };
+		A10000021 /* MemoryMatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000022; };
+		A10000022 /* ColorConquestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000023; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +51,10 @@
 		A20000017 /* SimonSaysView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimonSaysView.swift; sourceTree = "<group>"; };
 		A20000018 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
 		A20000019 /* TwoPlayerGames.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TwoPlayerGames.entitlements; sourceTree = "<group>"; };
+		A20000020 /* SessionTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTracker.swift; sourceTree = "<group>"; };
+		A20000021 /* TugOfWarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TugOfWarView.swift; sourceTree = "<group>"; };
+		A20000022 /* MemoryMatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryMatchView.swift; sourceTree = "<group>"; };
+		A20000023 /* ColorConquestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorConquestView.swift; sourceTree = "<group>"; };
 		A30000001 /* TwoPlayerGames.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwoPlayerGames.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -102,8 +110,35 @@
 				A50000011 /* ConnectFour */,
 				A50000012 /* ReactionTime */,
 				A50000013 /* SimonSays */,
+				A50000014 /* TugOfWar */,
+				A50000015 /* MemoryMatch */,
+				A50000016 /* ColorConquest */,
 			);
 			path = Games;
+			sourceTree = "<group>";
+		};
+		A50000014 /* TugOfWar */ = {
+			isa = PBXGroup;
+			children = (
+				A20000021 /* TugOfWarView.swift */,
+			);
+			path = TugOfWar;
+			sourceTree = "<group>";
+		};
+		A50000015 /* MemoryMatch */ = {
+			isa = PBXGroup;
+			children = (
+				A20000022 /* MemoryMatchView.swift */,
+			);
+			path = MemoryMatch;
+			sourceTree = "<group>";
+		};
+		A50000016 /* ColorConquest */ = {
+			isa = PBXGroup;
+			children = (
+				A20000023 /* ColorConquestView.swift */,
+			);
+			path = ColorConquest;
 			sourceTree = "<group>";
 		};
 		A50000013 /* SimonSays */ = {
@@ -163,6 +198,7 @@
 				A20000010 /* SoundManager.swift */,
 				A20000013 /* GameSettings.swift */,
 				A20000018 /* GameCenterManager.swift */,
+				A20000020 /* SessionTracker.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -269,6 +305,10 @@
 				A10000016 /* ReactionTimeView.swift in Sources */,
 				A10000017 /* SimonSaysView.swift in Sources */,
 				A10000018 /* GameCenterManager.swift in Sources */,
+				A10000019 /* SessionTracker.swift in Sources */,
+				A10000020 /* TugOfWarView.swift in Sources */,
+				A10000021 /* MemoryMatchView.swift in Sources */,
+				A10000022 /* ColorConquestView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

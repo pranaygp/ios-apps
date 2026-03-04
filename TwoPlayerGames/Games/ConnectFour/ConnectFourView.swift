@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ConnectFourView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     @State private var board: [[Int]] = Array(repeating: Array(repeating: 0, count: 7), count: 6)
     @State private var currentPlayer = 1  // 1 = red, 2 = yellow
     @State private var winner: Int?
@@ -14,6 +15,7 @@ struct ConnectFourView: View {
     @State private var lastDropRow: Int?
     @State private var dropAnimating = false
     @State private var winPulse = false
+    @State private var isPaused = false
 
     private let columns = 7
     private let rows = 6
@@ -55,13 +57,11 @@ struct ConnectFourView: View {
                     FrostedScoreBanner(player: 1, score: score1, color: .red, isTop: false)
                 }
 
-                GameOverlay {
-                    dismiss()
-                }
+                GameOverlay(onBack: { dismiss() }, onPause: { isPaused = true })
 
                 if showResult {
                     if let winner {
-                        WinnerOverlay(winner: winner, gameType: .connectFour) {
+                        WinnerOverlay(winner: winner, gameType: .connectFour, gameName: "Connect Four") {
                             resetBoard()
                         } onExit: {
                             dismiss()
@@ -74,6 +74,28 @@ struct ConnectFourView: View {
                         }
                     }
                 }
+
+                if isPaused && !showResult {
+                    PauseOverlay(
+                        score1: score1,
+                        score2: score2,
+                        player1Color: .red,
+                        player2Color: .yellow,
+                        onResume: { isPaused = false },
+                        onRestart: {
+                            isPaused = false
+                            resetBoard()
+                            score1 = 0
+                            score2 = 0
+                        },
+                        onExit: { dismiss() }
+                    )
+                }
+            }
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase != .active && !showResult {
+                isPaused = true
             }
         }
     }
@@ -90,7 +112,7 @@ struct ConnectFourView: View {
                             Image(systemName: "arrowtriangle.down.fill")
                                 .font(.system(size: 10))
                                 .foregroundStyle(
-                                    canDrop(in: col) && !showResult
+                                    canDrop(in: col) && !showResult && !isPaused
                                         ? (currentPlayer == 1 ? Color.red : Color.yellow).opacity(0.5)
                                         : Color.clear
                                 )
@@ -103,7 +125,7 @@ struct ConnectFourView: View {
                         }
                     }
                     .buttonStyle(.plain)
-                    .disabled(!canDrop(in: col) || showResult)
+                    .disabled(!canDrop(in: col) || showResult || isPaused)
                     .accessibilityLabel("Column \(col + 1)")
                     .accessibilityHint(canDrop(in: col) && !showResult ? "Tap to drop disc" : "")
                 }
@@ -216,7 +238,7 @@ struct ConnectFourView: View {
     }
 
     private func dropDisc(in col: Int) {
-        guard winner == nil, !isDraw, canDrop(in: col) else { return }
+        guard winner == nil, !isDraw, canDrop(in: col), !isPaused else { return }
 
         var targetRow = -1
         for row in stride(from: rows - 1, through: 0, by: -1) {

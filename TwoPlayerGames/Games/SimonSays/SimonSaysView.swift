@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SimonSaysView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
 
     enum Phase: Equatable {
         case creating
@@ -24,6 +25,7 @@ struct SimonSaysView: View {
     @State private var roundResultColor: Color = .green
     @State private var gameWinner: Int?
     @State private var showGameOver = false
+    @State private var isPaused = false
 
     private let settings = GameSettings.shared
     private var winScore: Int { settings.simonSaysWinScore }
@@ -64,17 +66,35 @@ struct SimonSaysView: View {
                     FrostedScoreBanner(player: 1, score: score1, color: .blue, isTop: false)
                 }
 
-                GameOverlay {
-                    dismiss()
-                }
+                GameOverlay(onBack: { dismiss() }, onPause: { isPaused = true })
 
                 if showGameOver, let winner = gameWinner {
-                    WinnerOverlay(winner: winner, gameType: .simonSays) {
+                    WinnerOverlay(winner: winner, gameType: .simonSays, gameName: "Simon Says") {
                         resetGame()
                     } onExit: {
                         dismiss()
                     }
                 }
+
+                if isPaused && !showGameOver {
+                    PauseOverlay(
+                        score1: score1,
+                        score2: score2,
+                        player1Color: .blue,
+                        player2Color: .red,
+                        onResume: { isPaused = false },
+                        onRestart: {
+                            isPaused = false
+                            resetGame()
+                        },
+                        onExit: { dismiss() }
+                    )
+                }
+            }
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase != .active && !showGameOver {
+                isPaused = true
             }
         }
     }
@@ -82,7 +102,7 @@ struct SimonSaysView: View {
     // MARK: - Player Section
 
     private func playerSection(for player: Int) -> some View {
-        let isActive = activePlayer == player
+        let isActive = activePlayer == player && !isPaused
         let isShowTarget = (phase == .showingPattern && player == repeater)
 
         return VStack(spacing: 10) {
@@ -257,6 +277,8 @@ struct SimonSaysView: View {
     // MARK: - Game Logic
 
     private func handleTap(index: Int) {
+        guard !isPaused else { return }
+
         switch phase {
         case .creating:
             pattern.append(index)
@@ -380,6 +402,7 @@ struct SimonSaysView: View {
             }
         } else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                guard !isPaused else { return }
                 onContinue()
             }
         }

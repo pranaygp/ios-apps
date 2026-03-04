@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TicTacToeView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     @State private var board: [String] = Array(repeating: "", count: 9)
     @State private var isXTurn = true
     @State private var winner: String?
@@ -10,6 +11,7 @@ struct TicTacToeView: View {
     @State private var scoreX = 0
     @State private var scoreO = 0
     @State private var showResult = false
+    @State private var isPaused = false
 
     private let winPatterns: [[Int]] = [
         [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -67,13 +69,11 @@ struct TicTacToeView: View {
                     FrostedScoreBanner(player: 1, score: scoreX, color: .blue, isTop: false)
                 }
 
-                GameOverlay {
-                    dismiss()
-                }
+                GameOverlay(onBack: { dismiss() }, onPause: { isPaused = true })
 
                 if showResult {
                     if let winner {
-                        WinnerOverlay(winner: winner == "X" ? 1 : 2, gameType: .ticTacToe) {
+                        WinnerOverlay(winner: winner == "X" ? 1 : 2, gameType: .ticTacToe, gameName: "Tic Tac Toe") {
                             resetBoard()
                         } onExit: {
                             dismiss()
@@ -86,12 +86,34 @@ struct TicTacToeView: View {
                         }
                     }
                 }
+
+                if isPaused && !showResult {
+                    PauseOverlay(
+                        score1: scoreX,
+                        score2: scoreO,
+                        player1Color: .blue,
+                        player2Color: .red,
+                        onResume: { isPaused = false },
+                        onRestart: {
+                            isPaused = false
+                            resetBoard()
+                            scoreX = 0
+                            scoreO = 0
+                        },
+                        onExit: { dismiss() }
+                    )
+                }
+            }
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase != .active && !showResult {
+                isPaused = true
             }
         }
     }
 
     private func placeMark(at index: Int) {
-        guard board[index].isEmpty, winner == nil, !isDraw else { return }
+        guard board[index].isEmpty, winner == nil, !isDraw, !isPaused else { return }
 
         withAnimation(.easeOut(duration: 0.2)) {
             board[index] = isXTurn ? "X" : "O"

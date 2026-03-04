@@ -11,14 +11,17 @@ struct GameCard: Identifiable {
 
 struct HomeView: View {
     @EnvironmentObject var gameCenterManager: GameCenterManager
+    @EnvironmentObject var sessionTracker: SessionTracker
     @State private var selectedGame: GameType?
     @State private var showSettings = false
+    @State private var showSessionDetail = false
     @State private var animateCards = false
     @State private var shimmerOffset: CGFloat = -200
     @State private var floatingPhase = false
 
     enum GameType: Identifiable {
         case pingPong, airHockey, ticTacToe, connectFour, reactionTime, simonSays
+        case tugOfWar, memoryMatch, colorConquest
         var id: Self { self }
     }
 
@@ -65,6 +68,27 @@ struct HomeView: View {
             gradient: [Color(red: 1.0, green: 0.45, blue: 0.55), Color(red: 0.85, green: 0.2, blue: 0.4)],
             gameType: .simonSays
         ),
+        GameCard(
+            title: "Tug of War",
+            subtitle: "Tap fast to pull the rope",
+            icon: "figure.strengthtraining.traditional",
+            gradient: [Color(red: 0.95, green: 0.55, blue: 0.1), Color(red: 0.8, green: 0.35, blue: 0.0)],
+            gameType: .tugOfWar
+        ),
+        GameCard(
+            title: "Memory Match",
+            subtitle: "Flip and find pairs",
+            icon: "rectangle.on.rectangle",
+            gradient: [Color(red: 0.2, green: 0.75, blue: 0.85), Color(red: 0.05, green: 0.5, blue: 0.65)],
+            gameType: .memoryMatch
+        ),
+        GameCard(
+            title: "Color Conquest",
+            subtitle: "Claim territory before time runs out",
+            icon: "square.grid.3x3.topleft.filled",
+            gradient: [Color(red: 0.65, green: 0.2, blue: 0.9), Color(red: 0.4, green: 0.05, blue: 0.7)],
+            gameType: .colorConquest
+        ),
     ]
 
     var body: some View {
@@ -77,6 +101,13 @@ struct HomeView: View {
                     // Header
                     headerView
                         .padding(.top, 16)
+
+                    // Session scoreboard
+                    if sessionTracker.hasGames {
+                        sessionScoreCard
+                            .padding(.horizontal, 20)
+                            .transition(.opacity.combined(with: .move(edge: .top)))
+                    }
 
                     // Game cards
                     VStack(spacing: 14) {
@@ -120,6 +151,92 @@ struct HomeView: View {
         .sheet(isPresented: $showSettings) {
             SettingsView()
         }
+        .sheet(isPresented: $showSessionDetail) {
+            SessionDetailView()
+        }
+    }
+
+    // MARK: - Session Score Card
+
+    private var sessionScoreCard: some View {
+        Button {
+            HapticManager.impact(.light)
+            showSessionDetail = true
+        } label: {
+            HStack(spacing: 16) {
+                // P1
+                VStack(spacing: 2) {
+                    Circle()
+                        .fill(Color.blue)
+                        .frame(width: 10, height: 10)
+                    Text("P1")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(.blue.opacity(0.7))
+                    Text("\(sessionTracker.player1Wins)")
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .contentTransition(.numericText())
+                }
+
+                Text("—")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(.white.opacity(0.25))
+
+                // P2
+                VStack(spacing: 2) {
+                    Circle()
+                        .fill(Color.red)
+                        .frame(width: 10, height: 10)
+                    Text("P2")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(.red.opacity(0.7))
+                    Text("\(sessionTracker.player2Wins)")
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .contentTransition(.numericText())
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("Session")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.4))
+                        .textCase(.uppercase)
+                        .tracking(1)
+                    Text("\(sessionTracker.gamesPlayed) games")
+                        .font(.system(size: 13))
+                        .foregroundStyle(.white.opacity(0.5))
+                }
+
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(.white.opacity(0.2))
+                    .font(.system(size: 12, weight: .semibold))
+            }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(.ultraThinMaterial)
+                    .environment(\.colorScheme, .dark)
+                    .opacity(0.5)
+            )
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.white.opacity(0.03))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(
+                        LinearGradient(
+                            colors: [Color.blue.opacity(0.15), Color.red.opacity(0.15)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
+        }
+        .buttonStyle(GameCardButtonStyle())
     }
 
     private var backgroundView: some View {
@@ -255,6 +372,118 @@ struct HomeView: View {
             ReactionTimeView()
         case .simonSays:
             SimonSaysView()
+        case .tugOfWar:
+            TugOfWarView()
+        case .memoryMatch:
+            MemoryMatchView()
+        case .colorConquest:
+            ColorConquestView()
+        }
+    }
+}
+
+// MARK: - Session Detail View
+
+struct SessionDetailView: View {
+    @EnvironmentObject var sessionTracker: SessionTracker
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                // Overall score
+                Section {
+                    HStack {
+                        Spacer()
+                        VStack(spacing: 4) {
+                            Circle()
+                                .fill(Color.blue)
+                                .frame(width: 12, height: 12)
+                            Text("Player 1")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(.blue)
+                            Text("\(sessionTracker.player1Wins)")
+                                .font(.system(size: 36, weight: .bold, design: .rounded))
+                        }
+                        Spacer()
+                        Text("vs")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        VStack(spacing: 4) {
+                            Circle()
+                                .fill(Color.red)
+                                .frame(width: 12, height: 12)
+                            Text("Player 2")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(.red)
+                            Text("\(sessionTracker.player2Wins)")
+                                .font(.system(size: 36, weight: .bold, design: .rounded))
+                        }
+                        Spacer()
+                    }
+                    .padding(.vertical, 8)
+                } header: {
+                    Text("Session Score")
+                }
+
+                // Per-game breakdown
+                if !sessionTracker.winsPerGame.isEmpty {
+                    Section {
+                        ForEach(sessionTracker.winsPerGame.sorted(by: { $0.key < $1.key }), id: \.key) { gameName, wins in
+                            HStack {
+                                Text(gameName)
+                                    .font(.system(size: 15, weight: .medium))
+                                Spacer()
+                                HStack(spacing: 12) {
+                                    Text("\(wins.p1)")
+                                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                                        .foregroundStyle(.blue)
+                                    Text("—")
+                                        .foregroundStyle(.secondary)
+                                    Text("\(wins.p2)")
+                                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                                        .foregroundStyle(.red)
+                                }
+                            }
+                        }
+                    } header: {
+                        Text("Game Breakdown")
+                    }
+                }
+
+                Section {
+                    HStack {
+                        Text("Games Played")
+                        Spacer()
+                        Text("\(sessionTracker.gamesPlayed)")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                Section {
+                    Button(role: .destructive) {
+                        HapticManager.impact(.medium)
+                        sessionTracker.reset()
+                        dismiss()
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Text("Reset Session")
+                            Spacer()
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Session Stats")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
         }
     }
 }
@@ -327,4 +556,6 @@ struct GameCardView: View {
 #Preview {
     HomeView()
         .preferredColorScheme(.dark)
+        .environmentObject(GameCenterManager.shared)
+        .environmentObject(SessionTracker.shared)
 }

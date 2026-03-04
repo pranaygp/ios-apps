@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ReactionTimeView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
 
     enum GamePhase {
         case waiting
@@ -25,6 +26,7 @@ struct ReactionTimeView: View {
     @State private var countdownNumber: Int = 3
     @State private var showCountdownNumber = false
     @State private var phaseColorAnimation = false
+    @State private var isPaused = false
 
     private let settings = GameSettings.shared
     private var winScore: Int { settings.reactionTimeWinScore }
@@ -35,29 +37,49 @@ struct ReactionTimeView: View {
                 Color(white: 0.06).ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    // Player 2 zone (top, rotated)
                     playerZone(player: 2)
                         .rotationEffect(.degrees(180))
 
-                    // Divider + status
                     centerStatus
 
-                    // Player 1 zone (bottom)
                     playerZone(player: 1)
                 }
 
-                // GO flash effect
                 Color.green.opacity(flashOpacity)
                     .ignoresSafeArea()
                     .allowsHitTesting(false)
 
-                GameOverlay {
+                GameOverlay(onBack: {
                     cleanup()
                     dismiss()
-                }
+                }, onPause: {
+                    isPaused = true
+                    cleanup()
+                })
 
                 if gameWinner != nil {
                     gameOverOverlay
+                }
+
+                if isPaused && gameWinner == nil {
+                    PauseOverlay(
+                        score1: score1,
+                        score2: score2,
+                        player1Color: .blue,
+                        player2Color: .red,
+                        onResume: {
+                            isPaused = false
+                            startRound()
+                        },
+                        onRestart: {
+                            isPaused = false
+                            resetGame()
+                        },
+                        onExit: {
+                            cleanup()
+                            dismiss()
+                        }
+                    )
                 }
             }
             .onAppear {
@@ -67,19 +89,24 @@ struct ReactionTimeView: View {
                 cleanup()
             }
         }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase != .active && gameWinner == nil {
+                isPaused = true
+                cleanup()
+            }
+        }
     }
 
     // MARK: - Player Zone
 
     private func playerZone(player: Int) -> some View {
         let score = player == 1 ? score1 : score2
-        let canTap = phase == .countdown || phase == .go
+        let canTap = (phase == .countdown || phase == .go) && !isPaused
 
         return Button {
             handleTap(player: player)
         } label: {
             ZStack {
-                // Background color based on phase
                 zoneColor(for: player)
                     .ignoresSafeArea()
                     .animation(.easeInOut(duration: 0.3), value: phaseColorAnimation)
@@ -118,7 +145,6 @@ struct ReactionTimeView: View {
                             .transition(.scale.combined(with: .opacity))
                     }
 
-                    // Countdown number overlay
                     if showCountdownNumber && phase == .waiting {
                         Text("\(countdownNumber)")
                             .font(.system(size: 72, weight: .bold, design: .rounded))
@@ -198,7 +224,6 @@ struct ReactionTimeView: View {
                 )
 
             HStack {
-                // Player 1 score pill
                 Text("\(score1)")
                     .font(.system(size: 18, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
@@ -207,7 +232,6 @@ struct ReactionTimeView: View {
 
                 Spacer()
 
-                // Phase text
                 Group {
                     switch phase {
                     case .waiting:
@@ -240,7 +264,6 @@ struct ReactionTimeView: View {
 
                 Spacer()
 
-                // Player 2 score pill
                 Text("\(score2)")
                     .font(.system(size: 18, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
@@ -261,7 +284,7 @@ struct ReactionTimeView: View {
         phaseColorAnimation.toggle()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            guard phase == .waiting else { return }
+            guard phase == .waiting, !isPaused else { return }
             withAnimation {
                 phase = .countdown
                 phaseColorAnimation.toggle()
@@ -269,11 +292,10 @@ struct ReactionTimeView: View {
             SoundManager.playCountdown()
             HapticManager.impact(.light)
 
-            // Random delay before "GO"
             let delay = Double.random(in: 1.5...4.0)
             countdownTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { _ in
                 DispatchQueue.main.async {
-                    guard phase == .countdown else { return }
+                    guard phase == .countdown, !isPaused else { return }
                     withAnimation(.easeInOut(duration: 0.1)) {
                         phase = .go
                         phaseColorAnimation.toggle()
@@ -282,7 +304,6 @@ struct ReactionTimeView: View {
                     SoundManager.playGo()
                     HapticManager.notification(.success)
 
-                    // Flash effect
                     withAnimation(.easeOut(duration: 0.1)) {
                         flashOpacity = 0.3
                     }
@@ -295,6 +316,8 @@ struct ReactionTimeView: View {
     }
 
     private func handleTap(player: Int) {
+        guard !isPaused else { return }
+
         switch phase {
         case .countdown:
             countdownTimer?.invalidate()
@@ -346,6 +369,7 @@ struct ReactionTimeView: View {
             }
         } else {
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                guard !isPaused else { return }
                 startRound()
             }
         }
@@ -367,7 +391,7 @@ struct ReactionTimeView: View {
     // MARK: - Game Over
 
     private var gameOverOverlay: some View {
-        WinnerOverlay(winner: gameWinner ?? 1, gameType: .reactionTime) {
+        WinnerOverlay(winner: gameWinner ?? 1, gameType: .reactionTime, gameName: "Reaction Time") {
             resetGame()
         } onExit: {
             cleanup()

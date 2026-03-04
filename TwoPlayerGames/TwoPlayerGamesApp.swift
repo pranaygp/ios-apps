@@ -5,6 +5,7 @@ import GameKit
 struct TwoPlayerGamesApp: App {
     @State private var showSplash = true
     @StateObject private var gameCenterManager = GameCenterManager.shared
+    @StateObject private var sessionTracker = SessionTracker.shared
 
     var body: some Scene {
         WindowGroup {
@@ -12,6 +13,7 @@ struct TwoPlayerGamesApp: App {
                 HomeView()
                     .preferredColorScheme(.dark)
                     .environmentObject(gameCenterManager)
+                    .environmentObject(sessionTracker)
 
                 if showSplash {
                     SplashScreen()
