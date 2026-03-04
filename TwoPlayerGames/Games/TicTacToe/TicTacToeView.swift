@@ -73,7 +73,7 @@ struct TicTacToeView: View {
 
                 if showResult {
                     if let winner {
-                        WinnerOverlay(winner: winner == "X" ? 1 : 2) {
+                        WinnerOverlay(winner: winner == "X" ? 1 : 2, gameType: .ticTacToe) {
                             resetBoard()
                         } onExit: {
                             dismiss()

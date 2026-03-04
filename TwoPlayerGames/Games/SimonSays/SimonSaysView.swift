@@ -69,7 +69,7 @@ struct SimonSaysView: View {
                 }
 
                 if showGameOver, let winner = gameWinner {
-                    WinnerOverlay(winner: winner) {
+                    WinnerOverlay(winner: winner, gameType: .simonSays) {
                         resetGame()
                     } onExit: {
                         dismiss()

@@ -10,6 +10,7 @@ struct GameCard: Identifiable {
 }
 
 struct HomeView: View {
+    @EnvironmentObject var gameCenterManager: GameCenterManager
     @State private var selectedGame: GameType?
     @State private var showSettings = false
     @State private var animateCards = false
@@ -184,25 +185,50 @@ struct HomeView: View {
 
                 Spacer()
 
-                Button {
-                    HapticManager.impact(.light)
-                    showSettings = true
-                } label: {
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: 20))
-                        .foregroundStyle(.white.opacity(0.5))
-                        .frame(width: 44, height: 44)
-                        .background(
-                            Circle()
-                                .fill(.ultraThinMaterial)
-                                .environment(\.colorScheme, .dark)
-                        )
-                        .overlay(
-                            Circle()
-                                .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                        )
+                HStack(spacing: 10) {
+                    // Game Center button
+                    if gameCenterManager.isAuthenticated {
+                        Button {
+                            HapticManager.impact(.light)
+                            gameCenterManager.showDashboard()
+                        } label: {
+                            Image(systemName: "trophy.fill")
+                                .font(.system(size: 18))
+                                .foregroundStyle(.yellow.opacity(0.7))
+                                .frame(width: 44, height: 44)
+                                .background(
+                                    Circle()
+                                        .fill(.ultraThinMaterial)
+                                        .environment(\.colorScheme, .dark)
+                                )
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color.yellow.opacity(0.12), lineWidth: 1)
+                                )
+                        }
+                        .accessibilityLabel("Game Center")
+                    }
+
+                    Button {
+                        HapticManager.impact(.light)
+                        showSettings = true
+                    } label: {
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 20))
+                            .foregroundStyle(.white.opacity(0.5))
+                            .frame(width: 44, height: 44)
+                            .background(
+                                Circle()
+                                    .fill(.ultraThinMaterial)
+                                    .environment(\.colorScheme, .dark)
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                            )
+                    }
+                    .accessibilityLabel("Settings")
                 }
-                .accessibilityLabel("Settings")
             }
             .padding(.horizontal, 24)
 

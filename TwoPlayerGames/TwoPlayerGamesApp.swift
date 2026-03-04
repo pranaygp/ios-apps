@@ -1,14 +1,17 @@
 import SwiftUI
+import GameKit
 
 @main
 struct TwoPlayerGamesApp: App {
     @State private var showSplash = true
+    @StateObject private var gameCenterManager = GameCenterManager.shared
 
     var body: some Scene {
         WindowGroup {
             ZStack {
                 HomeView()
                     .preferredColorScheme(.dark)
+                    .environmentObject(gameCenterManager)
 
                 if showSplash {
                     SplashScreen()
@@ -18,6 +21,9 @@ struct TwoPlayerGamesApp: App {
             }
             .animation(.easeOut(duration: 0.5), value: showSplash)
             .onAppear {
+                // Authenticate Game Center on launch
+                gameCenterManager.authenticate()
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                     showSplash = false
                 }

@@ -20,7 +20,7 @@ struct AirHockeyView: View {
                 }
 
                 if let winner = gameState.winner {
-                    WinnerOverlay(winner: winner) {
+                    WinnerOverlay(winner: winner, gameType: .airHockey) {
                         gameState.resetGame()
                     } onExit: {
                         dismiss()

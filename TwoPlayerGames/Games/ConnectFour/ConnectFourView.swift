@@ -61,7 +61,7 @@ struct ConnectFourView: View {
 
                 if showResult {
                     if let winner {
-                        WinnerOverlay(winner: winner) {
+                        WinnerOverlay(winner: winner, gameType: .connectFour) {
                             resetBoard()
                         } onExit: {
                             dismiss()

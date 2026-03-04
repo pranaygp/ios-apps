@@ -367,7 +367,7 @@ struct ReactionTimeView: View {
     // MARK: - Game Over
 
     private var gameOverOverlay: some View {
-        WinnerOverlay(winner: gameWinner ?? 1) {
+        WinnerOverlay(winner: gameWinner ?? 1, gameType: .reactionTime) {
             resetGame()
         } onExit: {
             cleanup()

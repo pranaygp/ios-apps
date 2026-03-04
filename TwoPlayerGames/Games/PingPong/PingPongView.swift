@@ -20,7 +20,7 @@ struct PingPongView: View {
                 }
 
                 if let winner = gameState.winner {
-                    WinnerOverlay(winner: winner) {
+                    WinnerOverlay(winner: winner, gameType: .pingPong) {
                         gameState.resetGame()
                     } onExit: {
                         dismiss()

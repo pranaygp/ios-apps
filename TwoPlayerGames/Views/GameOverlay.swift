@@ -1,4 +1,5 @@
 import SwiftUI
+import GameKit
 
 struct GameOverlay: View {
     let onBack: () -> Void
@@ -96,6 +97,7 @@ struct FrostedScoreBanner: View {
 
 struct WinnerOverlay: View {
     let winner: Int
+    var gameType: GameCenterManager.GameType? = nil
     let onPlayAgain: () -> Void
     let onExit: () -> Void
 
@@ -260,6 +262,11 @@ struct WinnerOverlay: View {
                 withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                     glowPulse = true
                 }
+            }
+
+            // Report win to Game Center
+            if let gameType {
+                GameCenterManager.shared.reportWin(for: gameType)
             }
         }
     }
