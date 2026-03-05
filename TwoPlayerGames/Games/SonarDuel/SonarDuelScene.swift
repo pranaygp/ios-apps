@@ -35,6 +35,8 @@ class SonarDuelScene: SKScene {
     private var sonarRevealedTiles = Set<GridPosition>()
     private var enemyVisibleUntil: TimeInterval = 0
     private var lastUpdateTime: TimeInterval = 0
+    private var isSetUp = false
+    private var pendingState: (GameState, PlayerRole, [GameEvent])?
 
     // Colors
     private let oceanColor = SKColor(red: 0.04, green: 0.08, blue: 0.18, alpha: 1.0)
@@ -53,6 +55,14 @@ class SonarDuelScene: SKScene {
         setupGrid()
         setupFog()
         setupSubmarines()
+
+        isSetUp = true
+
+        // Apply any state that arrived before setup
+        if let (state, role, events) = pendingState {
+            pendingState = nil
+            updateGameState(state, myRole: role, events: events)
+        }
 
         gameDelegate?.sceneReady()
     }
@@ -190,6 +200,12 @@ class SonarDuelScene: SKScene {
     // MARK: - Update State
 
     func updateGameState(_ state: GameState, myRole: PlayerRole, events: [GameEvent]) {
+        // Guard against being called before didMove(to:) has set up nodes
+        guard isSetUp else {
+            pendingState = (state, myRole, events)
+            return
+        }
+
         self.currentState = state
         self.myRole = myRole
 
