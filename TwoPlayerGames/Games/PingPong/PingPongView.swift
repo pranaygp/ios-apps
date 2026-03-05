@@ -14,8 +14,8 @@ struct PingPongView: View {
 
                 GeometryReader { geo in
                     SpriteView(scene: gameState.makeScene(size: geo.size))
-                        .ignoresSafeArea()
                 }
+                .ignoresSafeArea()
 
                 GameOverlay(onBack: { dismiss() }, onPause: {
                     isPaused = true
