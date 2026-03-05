@@ -21,7 +21,7 @@ struct HomeView: View {
 
     enum GameType: Identifiable {
         case pingPong, airHockey, ticTacToe, connectFour, reactionTime, simonSays
-        case tugOfWar, memoryMatch, colorConquest
+        case tugOfWar, memoryMatch, colorConquest, sonarDuel
         var id: Self { self }
     }
 
@@ -88,6 +88,13 @@ struct HomeView: View {
             icon: "square.grid.3x3.topleft.filled",
             gradient: [Color(red: 0.65, green: 0.2, blue: 0.9), Color(red: 0.4, green: 0.05, blue: 0.7)],
             gameType: .colorConquest
+        ),
+        GameCard(
+            title: "Sonar Duel",
+            subtitle: "LAN submarine battle",
+            icon: "antenna.radiowaves.left.and.right",
+            gradient: [Color(red: 0.15, green: 0.7, blue: 0.7), Color(red: 0.04, green: 0.15, blue: 0.35)],
+            gameType: .sonarDuel
         ),
     ]
 
@@ -378,6 +385,8 @@ struct HomeView: View {
             MemoryMatchView()
         case .colorConquest:
             ColorConquestView()
+        case .sonarDuel:
+            SonarDuelView()
         }
     }
 }

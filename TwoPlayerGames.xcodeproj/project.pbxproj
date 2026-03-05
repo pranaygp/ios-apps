@@ -29,6 +29,11 @@
 		A10000020 /* TugOfWarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000021; };
 		A10000021 /* MemoryMatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000022; };
 		A10000022 /* ColorConquestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000023; };
+		A10000030 /* SonarDuelModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000030; };
+		A10000031 /* SonarDuelNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000031; };
+		A10000032 /* SonarDuelScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000032; };
+		A10000033 /* SonarDuelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000033; };
+		A10000034 /* SonarDuelLobbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000034; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +60,12 @@
 		A20000021 /* TugOfWarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TugOfWarView.swift; sourceTree = "<group>"; };
 		A20000022 /* MemoryMatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryMatchView.swift; sourceTree = "<group>"; };
 		A20000023 /* ColorConquestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorConquestView.swift; sourceTree = "<group>"; };
+		A20000030 /* SonarDuelModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SonarDuelModels.swift; sourceTree = "<group>"; };
+		A20000031 /* SonarDuelNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SonarDuelNetworkManager.swift; sourceTree = "<group>"; };
+		A20000032 /* SonarDuelScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SonarDuelScene.swift; sourceTree = "<group>"; };
+		A20000033 /* SonarDuelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SonarDuelView.swift; sourceTree = "<group>"; };
+		A20000034 /* SonarDuelLobbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SonarDuelLobbyView.swift; sourceTree = "<group>"; };
+		A20000035 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A30000001 /* TwoPlayerGames.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwoPlayerGames.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -82,6 +93,7 @@
 			children = (
 				A20000001 /* TwoPlayerGamesApp.swift */,
 				A20000019 /* TwoPlayerGames.entitlements */,
+				A20000035 /* Info.plist */,
 				A50000003 /* Views */,
 				A50000004 /* Games */,
 				A50000008 /* Utilities */,
@@ -113,6 +125,7 @@
 				A50000014 /* TugOfWar */,
 				A50000015 /* MemoryMatch */,
 				A50000016 /* ColorConquest */,
+				A50000017 /* SonarDuel */,
 			);
 			path = Games;
 			sourceTree = "<group>";
@@ -189,6 +202,18 @@
 				A20000008 /* TicTacToeView.swift */,
 			);
 			path = TicTacToe;
+			sourceTree = "<group>";
+		};
+		A50000017 /* SonarDuel */ = {
+			isa = PBXGroup;
+			children = (
+				A20000030 /* SonarDuelModels.swift */,
+				A20000031 /* SonarDuelNetworkManager.swift */,
+				A20000032 /* SonarDuelScene.swift */,
+				A20000033 /* SonarDuelView.swift */,
+				A20000034 /* SonarDuelLobbyView.swift */,
+			);
+			path = SonarDuel;
 			sourceTree = "<group>";
 		};
 		A50000008 /* Utilities */ = {
@@ -309,6 +334,11 @@
 				A10000020 /* TugOfWarView.swift in Sources */,
 				A10000021 /* MemoryMatchView.swift in Sources */,
 				A10000022 /* ColorConquestView.swift in Sources */,
+				A10000030 /* SonarDuelModels.swift in Sources */,
+				A10000031 /* SonarDuelNetworkManager.swift in Sources */,
+				A10000032 /* SonarDuelScene.swift in Sources */,
+				A10000033 /* SonarDuelView.swift in Sources */,
+				A10000034 /* SonarDuelLobbyView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -444,6 +474,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TwoPlayerGames/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "2P Games";
 				INFOPLIST_KEY_GCSupportsGameMode = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -481,6 +512,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TwoPlayerGames/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "2P Games";
 				INFOPLIST_KEY_GCSupportsGameMode = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
