@@ -5,21 +5,33 @@ struct GameOverlay: View {
     let onBack: () -> Void
     var onPause: (() -> Void)? = nil
 
+    @State private var isHolding = false
+    @State private var holdProgress: CGFloat = 0
+    @State private var holdTimer: Timer?
+    @State private var pulseScale: CGFloat = 1.0
+
+    private let holdDuration: TimeInterval = 0.5 // seconds to hold before activating
+
     var body: some View {
+        // Center of screen, right edge — neutral zone between both players
         VStack {
+            Spacer()
             HStack {
-                Button(action: {
-                    HapticManager.impact(.light)
-                    if let onPause {
-                        onPause()
-                    } else {
-                        onBack()
-                    }
-                }) {
+                Spacer()
+                // Pause button: centered vertically, right edge, requires long press
+                ZStack {
+                    // Hold progress ring
+                    Circle()
+                        .trim(from: 0, to: holdProgress)
+                        .stroke(Color.white.opacity(0.8), style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                        .frame(width: 52, height: 52)
+                        .rotationEffect(.degrees(-90))
+                        .animation(.linear(duration: 0.05), value: holdProgress)
+
                     Image(systemName: onPause != nil ? "pause.fill" : "xmark")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(.white.opacity(0.6))
-                        .frame(width: 32, height: 32)
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundStyle(.white.opacity(isHolding ? 0.9 : 0.4))
+                        .frame(width: 48, height: 48)
                         .background(
                             Circle()
                                 .fill(.ultraThinMaterial)
@@ -27,15 +39,70 @@ struct GameOverlay: View {
                         )
                         .overlay(
                             Circle()
-                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                .stroke(Color.white.opacity(isHolding ? 0.3 : 0.08), lineWidth: 1)
                         )
+                        .scaleEffect(pulseScale)
                 }
-                .accessibilityLabel(onPause != nil ? "Pause game" : "Close game")
-                .padding(16)
-
-                Spacer()
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { _ in
+                            guard !isHolding else { return }
+                            startHold()
+                        }
+                        .onEnded { _ in
+                            cancelHold()
+                        }
+                )
+                .accessibilityLabel(onPause != nil ? "Hold to pause game" : "Hold to close game")
+                .accessibilityHint("Press and hold for half a second")
+                .padding(.trailing, 8)
             }
             Spacer()
+        }
+    }
+
+    private func startHold() {
+        isHolding = true
+        holdProgress = 0
+        withAnimation(.easeInOut(duration: 0.2).repeatForever(autoreverses: true)) {
+            pulseScale = 1.08
+        }
+
+        // Animate progress over holdDuration
+        let steps = 20
+        let interval = holdDuration / Double(steps)
+        var currentStep = 0
+
+        holdTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { timer in
+            currentStep += 1
+            holdProgress = CGFloat(currentStep) / CGFloat(steps)
+
+            if currentStep >= steps {
+                timer.invalidate()
+                holdTimer = nil
+                // Trigger the action
+                HapticManager.impact(.medium)
+                withAnimation(.default) {
+                    pulseScale = 1.0
+                }
+                if let onPause {
+                    onPause()
+                } else {
+                    onBack()
+                }
+                isHolding = false
+                holdProgress = 0
+            }
+        }
+    }
+
+    private func cancelHold() {
+        holdTimer?.invalidate()
+        holdTimer = nil
+        isHolding = false
+        withAnimation(.easeOut(duration: 0.2)) {
+            holdProgress = 0
+            pulseScale = 1.0
         }
     }
 }
