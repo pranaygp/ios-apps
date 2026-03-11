@@ -21,7 +21,7 @@ struct HomeView: View {
 
     enum GameType: Identifiable {
         case pingPong, airHockey, ticTacToe, connectFour, reactionTime, simonSays
-        case tugOfWar, memoryMatch, colorConquest, sonarDuel
+        case tugOfWar, memoryMatch, colorConquest, sonarDuel, dotsAndBoxes
         var id: Self { self }
     }
 
@@ -95,6 +95,13 @@ struct HomeView: View {
             icon: "antenna.radiowaves.left.and.right",
             gradient: [Color(red: 0.15, green: 0.7, blue: 0.7), Color(red: 0.04, green: 0.15, blue: 0.35)],
             gameType: .sonarDuel
+        ),
+        GameCard(
+            title: "Dots & Boxes",
+            subtitle: "Classic pencil-and-paper strategy",
+            icon: "square.grid.3x3",
+            gradient: [Color(red: 0.3, green: 0.6, blue: 0.95), Color(red: 0.15, green: 0.35, blue: 0.8)],
+            gameType: .dotsAndBoxes
         ),
     ]
 
@@ -387,6 +394,8 @@ struct HomeView: View {
             ColorConquestView()
         case .sonarDuel:
             SonarDuelView()
+        case .dotsAndBoxes:
+            DotsAndBoxesView()
         }
     }
 }

@@ -34,6 +34,7 @@
 		A10000032 /* SonarDuelScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000032; };
 		A10000033 /* SonarDuelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000033; };
 		A10000034 /* SonarDuelLobbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000034; };
+		A10000040 /* DotsAndBoxesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000040; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,6 +67,7 @@
 		A20000033 /* SonarDuelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SonarDuelView.swift; sourceTree = "<group>"; };
 		A20000034 /* SonarDuelLobbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SonarDuelLobbyView.swift; sourceTree = "<group>"; };
 		A20000035 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A20000040 /* DotsAndBoxesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotsAndBoxesView.swift; sourceTree = "<group>"; };
 		A30000001 /* TwoPlayerGames.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwoPlayerGames.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -126,6 +128,7 @@
 				A50000015 /* MemoryMatch */,
 				A50000016 /* ColorConquest */,
 				A50000017 /* SonarDuel */,
+				A50000018 /* DotsAndBoxes */,
 			);
 			path = Games;
 			sourceTree = "<group>";
@@ -214,6 +217,14 @@
 				A20000034 /* SonarDuelLobbyView.swift */,
 			);
 			path = SonarDuel;
+			sourceTree = "<group>";
+		};
+		A50000018 /* DotsAndBoxes */ = {
+			isa = PBXGroup;
+			children = (
+				A20000040 /* DotsAndBoxesView.swift */,
+			);
+			path = DotsAndBoxes;
 			sourceTree = "<group>";
 		};
 		A50000008 /* Utilities */ = {
@@ -339,6 +350,7 @@
 				A10000032 /* SonarDuelScene.swift in Sources */,
 				A10000033 /* SonarDuelView.swift in Sources */,
 				A10000034 /* SonarDuelLobbyView.swift in Sources */,
+				A10000040 /* DotsAndBoxesView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
