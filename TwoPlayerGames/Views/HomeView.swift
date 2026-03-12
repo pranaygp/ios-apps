@@ -21,7 +21,7 @@ struct HomeView: View {
 
     enum GameType: Identifiable {
         case pingPong, airHockey, ticTacToe, connectFour, reactionTime, simonSays
-        case tugOfWar, memoryMatch, colorConquest, sonarDuel, dotsAndBoxes, snakeVsSnake
+        case tugOfWar, memoryMatch, colorConquest, sonarDuel, dotsAndBoxes, snakeVsSnake, war
         var id: Self { self }
     }
 
@@ -109,6 +109,13 @@ struct HomeView: View {
             icon: "arrow.trianglehead.swap",
             gradient: [Color(red: 0.1, green: 0.8, blue: 0.4), Color(red: 0.05, green: 0.55, blue: 0.25)],
             gameType: .snakeVsSnake
+        ),
+        GameCard(
+            title: "War",
+            subtitle: "Classic card battle",
+            icon: "suit.spade.fill",
+            gradient: [Color(red: 0.85, green: 0.65, blue: 0.2), Color(red: 0.7, green: 0.4, blue: 0.1)],
+            gameType: .war
         ),
     ]
 
@@ -405,6 +412,8 @@ struct HomeView: View {
             DotsAndBoxesView()
         case .snakeVsSnake:
             SnakeVsSnakeView()
+        case .war:
+            WarView()
         }
     }
 }
