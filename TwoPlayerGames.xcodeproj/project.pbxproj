@@ -36,6 +36,7 @@
 		A10000034 /* SonarDuelLobbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000034; };
 		A10000040 /* DotsAndBoxesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000040; };
 		A10000050 /* SnakeVsSnakeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000050; };
+		A10000060 /* WarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000060; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -70,6 +71,7 @@
 		A20000035 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A20000040 /* DotsAndBoxesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotsAndBoxesView.swift; sourceTree = "<group>"; };
 		A20000050 /* SnakeVsSnakeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnakeVsSnakeView.swift; sourceTree = "<group>"; };
+		A20000060 /* WarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarView.swift; sourceTree = "<group>"; };
 		A30000001 /* TwoPlayerGames.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwoPlayerGames.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -132,6 +134,7 @@
 				A50000017 /* SonarDuel */,
 				A50000018 /* DotsAndBoxes */,
 				A50000019 /* SnakeVsSnake */,
+				A50000020 /* War */,
 			);
 			path = Games;
 			sourceTree = "<group>";
@@ -236,6 +239,14 @@
 				A20000050 /* SnakeVsSnakeView.swift */,
 			);
 			path = SnakeVsSnake;
+			sourceTree = "<group>";
+		};
+		A50000020 /* War */ = {
+			isa = PBXGroup;
+			children = (
+				A20000060 /* WarView.swift */,
+			);
+			path = War;
 			sourceTree = "<group>";
 		};
 		A50000008 /* Utilities */ = {
@@ -363,6 +374,7 @@
 				A10000034 /* SonarDuelLobbyView.swift in Sources */,
 				A10000040 /* DotsAndBoxesView.swift in Sources */,
 				A10000050 /* SnakeVsSnakeView.swift in Sources */,
+				A10000060 /* WarView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -494,7 +506,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -532,7 +544,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
