@@ -303,6 +303,8 @@ struct WarView: View {
 
     @State private var engine = WarGameEngine()
     @State private var isPaused = false
+    @State private var showTutorial = false
+    @AppStorage("hasSeenTutorial_War") private var hasSeenTutorial = false
     @State private var warFlash = false
     @State private var cardFlip1: Double = 0
     @State private var cardFlip2: Double = 0
@@ -326,6 +328,17 @@ struct WarView: View {
                 .offset(x: engine.shakeAmount)
 
                 GameOverlay(onBack: { dismiss() }, onPause: { isPaused = true })
+
+                if !showTutorial && !isPaused && !engine.showResult {
+                    TutorialInfoButton { showTutorial = true }
+                }
+
+                if showTutorial {
+                    TutorialOverlayView(content: .war) {
+                        showTutorial = false
+                        hasSeenTutorial = true
+                    }
+                }
 
                 // WAR flash overlay
                 if warFlash {
@@ -360,6 +373,7 @@ struct WarView: View {
         }
         .onAppear {
             engine.startGame()
+            if !hasSeenTutorial { showTutorial = true }
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase != .active && !engine.showResult {

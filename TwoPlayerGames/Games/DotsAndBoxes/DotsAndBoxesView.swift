@@ -27,6 +27,8 @@ struct DotsAndBoxesView: View {
     @State private var lastCompletedBoxes: Set<String> = []
     @State private var boxScaleAnimations: Set<String> = []
     @State private var highlightedLine: LineID?
+    @State private var showTutorial = false
+    @AppStorage("hasSeenTutorial_DotsAndBoxes") private var hasSeenTutorial = false
 
     private let settings = GameSettings.shared
 
@@ -80,6 +82,17 @@ struct DotsAndBoxesView: View {
 
                 GameOverlay(onBack: { dismiss() }, onPause: { isPaused = true })
 
+                if !showTutorial && !isPaused && !showResult {
+                    TutorialInfoButton { showTutorial = true }
+                }
+
+                if showTutorial {
+                    TutorialOverlayView(content: .dotsAndBoxes) {
+                        showTutorial = false
+                        hasSeenTutorial = true
+                    }
+                }
+
                 if showResult {
                     if let winner {
                         WinnerOverlay(winner: winner, gameType: .dotsAndBoxes, gameName: "Dots & Boxes") {
@@ -113,6 +126,9 @@ struct DotsAndBoxesView: View {
                     )
                 }
             }
+        }
+        .onAppear {
+            if !hasSeenTutorial { showTutorial = true }
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase != .active && !showResult {

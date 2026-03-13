@@ -19,6 +19,8 @@ struct TugOfWarView: View {
     @State private var p2Flash = false
     @State private var roundWinner: Int?
     @State private var showRoundResult = false
+    @State private var showTutorial = false
+    @AppStorage("hasSeenTutorial_TugOfWar") private var hasSeenTutorial = false
 
     private let settings = GameSettings.shared
     private var winScore: Int { settings.tugOfWarWinScore }
@@ -58,6 +60,21 @@ struct TugOfWarView: View {
                     roundActive = false
                 })
 
+                if !showTutorial && !isPaused && gameWinner == nil {
+                    TutorialInfoButton {
+                        showTutorial = true
+                        roundActive = false
+                    }
+                }
+
+                if showTutorial {
+                    TutorialOverlayView(content: .tugOfWar) {
+                        showTutorial = false
+                        hasSeenTutorial = true
+                        if !isPaused && gameWinner == nil { startCountdown() }
+                    }
+                }
+
                 if let winner = gameWinner {
                     WinnerOverlay(winner: winner, gameType: .tugOfWar, gameName: "Tug of War") {
                         resetGame()
@@ -85,7 +102,11 @@ struct TugOfWarView: View {
                 }
             }
             .onAppear {
-                startCountdown()
+                if !hasSeenTutorial {
+                    showTutorial = true
+                } else {
+                    startCountdown()
+                }
             }
         }
         .onChange(of: scenePhase) { _, newPhase in

@@ -27,6 +27,8 @@ struct ReactionTimeView: View {
     @State private var showCountdownNumber = false
     @State private var phaseColorAnimation = false
     @State private var isPaused = false
+    @State private var showTutorial = false
+    @AppStorage("hasSeenTutorial_ReactionTime") private var hasSeenTutorial = false
 
     private let settings = GameSettings.shared
     private var winScore: Int { settings.reactionTimeWinScore }
@@ -57,6 +59,21 @@ struct ReactionTimeView: View {
                     cleanup()
                 })
 
+                if !showTutorial && !isPaused && gameWinner == nil {
+                    TutorialInfoButton {
+                        showTutorial = true
+                        cleanup()
+                    }
+                }
+
+                if showTutorial {
+                    TutorialOverlayView(content: .reactionTime) {
+                        showTutorial = false
+                        hasSeenTutorial = true
+                        if !isPaused { startRound() }
+                    }
+                }
+
                 if gameWinner != nil {
                     gameOverOverlay
                 }
@@ -83,7 +100,11 @@ struct ReactionTimeView: View {
                 }
             }
             .onAppear {
-                startRound()
+                if !hasSeenTutorial {
+                    showTutorial = true
+                } else {
+                    startRound()
+                }
             }
             .onDisappear {
                 cleanup()

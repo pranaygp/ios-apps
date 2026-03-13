@@ -6,6 +6,8 @@ struct PingPongView: View {
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var gameState = PingPongGameState()
     @State private var isPaused = false
+    @State private var showTutorial = false
+    @AppStorage("hasSeenTutorial_PingPong") private var hasSeenTutorial = false
 
     var body: some View {
         GameTransitionView {
@@ -21,6 +23,18 @@ struct PingPongView: View {
                     isPaused = true
                     gameState.pauseScene()
                 })
+
+                if !showTutorial && !isPaused && gameState.winner == nil {
+                    TutorialInfoButton { showTutorial = true; gameState.pauseScene() }
+                }
+
+                if showTutorial {
+                    TutorialOverlayView(content: .pingPong) {
+                        showTutorial = false
+                        hasSeenTutorial = true
+                        if !isPaused { gameState.resumeScene() }
+                    }
+                }
 
                 if let winner = gameState.winner {
                     WinnerOverlay(winner: winner, gameType: .pingPong, gameName: "Ping Pong") {
@@ -48,6 +62,9 @@ struct PingPongView: View {
                     )
                 }
             }
+        }
+        .onAppear {
+            if !hasSeenTutorial { showTutorial = true; gameState.pauseScene() }
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase != .active && gameState.winner == nil {

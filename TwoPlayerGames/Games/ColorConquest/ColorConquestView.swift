@@ -29,6 +29,8 @@ struct ColorConquestView: View {
     @State private var bombAvailableP2 = true
     @State private var bombModeP1 = false
     @State private var bombModeP2 = false
+    @State private var showTutorial = false
+    @AppStorage("hasSeenTutorial_ColorConquest") private var hasSeenTutorial = false
 
     private let gridCols = 6
     private let gridRows = 10  // 5 rows per player
@@ -68,6 +70,21 @@ struct ColorConquestView: View {
                     timer?.invalidate()
                 })
 
+                if !showTutorial && !isPaused && gameWinner == nil {
+                    TutorialInfoButton {
+                        showTutorial = true
+                        timer?.invalidate()
+                    }
+                }
+
+                if showTutorial {
+                    TutorialOverlayView(content: .colorConquest) {
+                        showTutorial = false
+                        hasSeenTutorial = true
+                        if gameActive && !isPaused { startTimer() }
+                    }
+                }
+
                 if let winner = gameWinner {
                     WinnerOverlay(winner: winner, gameType: .colorConquest, gameName: "Color Conquest") {
                         resetGame()
@@ -97,7 +114,11 @@ struct ColorConquestView: View {
             }
             .onAppear {
                 setupGrid()
-                startCountdown()
+                if !hasSeenTutorial {
+                    showTutorial = true
+                } else {
+                    startCountdown()
+                }
             }
             .onDisappear {
                 cleanup()

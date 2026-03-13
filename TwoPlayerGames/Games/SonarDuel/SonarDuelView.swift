@@ -284,6 +284,8 @@ struct SonarDuelView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var networkManager = SonarDuelNetworkManager()
     @StateObject private var controller = SonarDuelGameController()
+    @State private var showTutorial = false
+    @AppStorage("hasSeenTutorial_SonarDuel") private var hasSeenTutorial = false
 
     var body: some View {
         ZStack {
@@ -310,9 +312,23 @@ struct SonarDuelView: View {
                 })
                 .transition(.opacity)
             }
+
+            if !showTutorial && phaseCategory <= 1 {
+                TutorialInfoButton { showTutorial = true }
+            }
+
+            if showTutorial {
+                TutorialOverlayView(content: .sonarDuel) {
+                    showTutorial = false
+                    hasSeenTutorial = true
+                }
+            }
         }
         .animation(.easeInOut(duration: 0.3), value: phaseCategory)
-        .onAppear { controller.attach(network: networkManager) }
+        .onAppear {
+            controller.attach(network: networkManager)
+            if !hasSeenTutorial { showTutorial = true }
+        }
         .onDisappear { controller.cleanup() }
         .alert("Disconnected", isPresented: $controller.showDisconnectAlert) {
             Button("Return to Home") { controller.cleanup(); dismiss() }

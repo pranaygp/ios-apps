@@ -26,6 +26,8 @@ struct SimonSaysView: View {
     @State private var gameWinner: Int?
     @State private var showGameOver = false
     @State private var isPaused = false
+    @State private var showTutorial = false
+    @AppStorage("hasSeenTutorial_SimonSays") private var hasSeenTutorial = false
 
     private let settings = GameSettings.shared
     private var winScore: Int { settings.simonSaysWinScore }
@@ -68,6 +70,17 @@ struct SimonSaysView: View {
 
                 GameOverlay(onBack: { dismiss() }, onPause: { isPaused = true })
 
+                if !showTutorial && !isPaused && !showGameOver {
+                    TutorialInfoButton { showTutorial = true }
+                }
+
+                if showTutorial {
+                    TutorialOverlayView(content: .simonSays) {
+                        showTutorial = false
+                        hasSeenTutorial = true
+                    }
+                }
+
                 if showGameOver, let winner = gameWinner {
                     WinnerOverlay(winner: winner, gameType: .simonSays, gameName: "Simon Says") {
                         resetGame()
@@ -91,6 +104,9 @@ struct SimonSaysView: View {
                     )
                 }
             }
+        }
+        .onAppear {
+            if !hasSeenTutorial { showTutorial = true }
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase != .active && !showGameOver {

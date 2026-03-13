@@ -37,6 +37,7 @@
 		A10000040 /* DotsAndBoxesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000040; };
 		A10000050 /* SnakeVsSnakeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000050; };
 		A10000060 /* WarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000060; };
+		A10000070 /* TutorialOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000070; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -72,6 +73,7 @@
 		A20000040 /* DotsAndBoxesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotsAndBoxesView.swift; sourceTree = "<group>"; };
 		A20000050 /* SnakeVsSnakeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnakeVsSnakeView.swift; sourceTree = "<group>"; };
 		A20000060 /* WarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarView.swift; sourceTree = "<group>"; };
+		A20000070 /* TutorialOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialOverlayView.swift; sourceTree = "<group>"; };
 		A30000001 /* TwoPlayerGames.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwoPlayerGames.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -115,6 +117,7 @@
 				A20000002 /* HomeView.swift */,
 				A20000003 /* GameOverlay.swift */,
 				A20000014 /* SettingsView.swift */,
+				A20000070 /* TutorialOverlayView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -375,6 +378,7 @@
 				A10000040 /* DotsAndBoxesView.swift in Sources */,
 				A10000050 /* SnakeVsSnakeView.swift in Sources */,
 				A10000060 /* WarView.swift in Sources */,
+				A10000070 /* TutorialOverlayView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -506,7 +510,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 17;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -544,7 +548,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 17;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

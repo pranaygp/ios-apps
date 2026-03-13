@@ -12,6 +12,8 @@ struct TicTacToeView: View {
     @State private var scoreO = 0
     @State private var showResult = false
     @State private var isPaused = false
+    @State private var showTutorial = false
+    @AppStorage("hasSeenTutorial_TicTacToe") private var hasSeenTutorial = false
 
     private let winPatterns: [[Int]] = [
         [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -71,6 +73,17 @@ struct TicTacToeView: View {
 
                 GameOverlay(onBack: { dismiss() }, onPause: { isPaused = true })
 
+                if !showTutorial && !isPaused && !showResult {
+                    TutorialInfoButton { showTutorial = true }
+                }
+
+                if showTutorial {
+                    TutorialOverlayView(content: .ticTacToe) {
+                        showTutorial = false
+                        hasSeenTutorial = true
+                    }
+                }
+
                 if showResult {
                     if let winner {
                         WinnerOverlay(winner: winner == "X" ? 1 : 2, gameType: .ticTacToe, gameName: "Tic Tac Toe") {
@@ -104,6 +117,9 @@ struct TicTacToeView: View {
                     )
                 }
             }
+        }
+        .onAppear {
+            if !hasSeenTutorial { showTutorial = true }
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase != .active && !showResult {

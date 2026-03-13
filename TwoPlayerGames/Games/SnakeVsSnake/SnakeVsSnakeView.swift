@@ -252,6 +252,8 @@ struct SnakeVsSnakeView: View {
     @State private var foodPulse: Double = 0
     @State private var deathTime: Date? = nil
     @State private var isSetup = false
+    @State private var showTutorial = false
+    @AppStorage("hasSeenTutorial_SnakeVsSnake") private var hasSeenTutorial = false
 
     private let backgroundColor = Color(red: 0.1, green: 0.1, blue: 0.18)
     private let player1Color1 = Color(red: 0.0, green: 0.7, blue: 1.0)
@@ -323,11 +325,30 @@ struct SnakeVsSnakeView: View {
                     .onAppear {
                         engine.setup(cols: gridInfo.cols, rows: gridInfo.rows, cellSize: gridInfo.cellSize)
                         isSetup = true
+                        if !hasSeenTutorial {
+                            showTutorial = true
+                            isPaused = true
+                        }
                     }
                 }
                 .ignoresSafeArea()
 
                 GameOverlay(onBack: { dismiss() }, onPause: { isPaused = true })
+
+                if !showTutorial && !isPaused && !showResult && !engine.gameOver {
+                    TutorialInfoButton {
+                        showTutorial = true
+                        isPaused = true
+                    }
+                }
+
+                if showTutorial {
+                    TutorialOverlayView(content: .snakeVsSnake) {
+                        showTutorial = false
+                        hasSeenTutorial = true
+                        isPaused = false
+                    }
+                }
 
                 if showResult {
                     if engine.isDraw {

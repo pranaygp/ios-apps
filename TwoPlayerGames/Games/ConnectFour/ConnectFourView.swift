@@ -16,6 +16,8 @@ struct ConnectFourView: View {
     @State private var dropAnimating = false
     @State private var winPulse = false
     @State private var isPaused = false
+    @State private var showTutorial = false
+    @AppStorage("hasSeenTutorial_ConnectFour") private var hasSeenTutorial = false
 
     private let columns = 7
     private let rows = 6
@@ -59,6 +61,17 @@ struct ConnectFourView: View {
 
                 GameOverlay(onBack: { dismiss() }, onPause: { isPaused = true })
 
+                if !showTutorial && !isPaused && !showResult {
+                    TutorialInfoButton { showTutorial = true }
+                }
+
+                if showTutorial {
+                    TutorialOverlayView(content: .connectFour) {
+                        showTutorial = false
+                        hasSeenTutorial = true
+                    }
+                }
+
                 if showResult {
                     if let winner {
                         WinnerOverlay(winner: winner, gameType: .connectFour, gameName: "Connect Four") {
@@ -92,6 +105,9 @@ struct ConnectFourView: View {
                     )
                 }
             }
+        }
+        .onAppear {
+            if !hasSeenTutorial { showTutorial = true }
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase != .active && !showResult {

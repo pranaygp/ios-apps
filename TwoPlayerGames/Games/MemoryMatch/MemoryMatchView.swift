@@ -23,6 +23,8 @@ struct MemoryMatchView: View {
     @State private var isPaused = false
     @State private var matchFlash = false
     @State private var lastMatchPlayer: Int?
+    @State private var showTutorial = false
+    @AppStorage("hasSeenTutorial_MemoryMatch") private var hasSeenTutorial = false
 
     private let gridColumns = 4
     private let gridRows = 5
@@ -62,6 +64,17 @@ struct MemoryMatchView: View {
 
                 GameOverlay(onBack: { dismiss() }, onPause: { isPaused = true })
 
+                if !showTutorial && !isPaused && gameWinner == nil && !isDraw {
+                    TutorialInfoButton { showTutorial = true }
+                }
+
+                if showTutorial {
+                    TutorialOverlayView(content: .memoryMatch) {
+                        showTutorial = false
+                        hasSeenTutorial = true
+                    }
+                }
+
                 if let winner = gameWinner {
                     WinnerOverlay(winner: winner, gameType: .memoryMatch, gameName: "Memory Match") {
                         resetGame()
@@ -95,6 +108,7 @@ struct MemoryMatchView: View {
             }
             .onAppear {
                 setupCards()
+                if !hasSeenTutorial { showTutorial = true }
             }
         }
         .onChange(of: scenePhase) { _, newPhase in
