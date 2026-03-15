@@ -159,6 +159,18 @@ extension TutorialContent {
         ],
         controls: "Tap your side to flip your card"
     )
+
+    static let battleship = TutorialContent(
+        title: "Battleship",
+        emoji: "\u{1F6A2}",
+        rules: [
+            "Each player secretly places 5 ships on their grid",
+            "Take turns firing shots at the enemy's waters",
+            "Red = hit, white = miss — sink all 5 ships to win",
+            "Pass the device between turns to keep boards hidden"
+        ],
+        controls: "Tap grid cells to place ships or fire shots"
+    )
 }
 
 // MARK: - Tutorial Overlay View

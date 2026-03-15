@@ -38,6 +38,7 @@
 		A10000050 /* SnakeVsSnakeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000050; };
 		A10000060 /* WarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000060; };
 		A10000070 /* TutorialOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000070; };
+		A10000080 /* BattleshipGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000080; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -74,6 +75,7 @@
 		A20000050 /* SnakeVsSnakeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnakeVsSnakeView.swift; sourceTree = "<group>"; };
 		A20000060 /* WarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarView.swift; sourceTree = "<group>"; };
 		A20000070 /* TutorialOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialOverlayView.swift; sourceTree = "<group>"; };
+		A20000080 /* BattleshipGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleshipGame.swift; sourceTree = "<group>"; };
 		A30000001 /* TwoPlayerGames.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwoPlayerGames.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -138,6 +140,7 @@
 				A50000018 /* DotsAndBoxes */,
 				A50000019 /* SnakeVsSnake */,
 				A50000020 /* War */,
+				A50000021 /* Battleship */,
 			);
 			path = Games;
 			sourceTree = "<group>";
@@ -250,6 +253,14 @@
 				A20000060 /* WarView.swift */,
 			);
 			path = War;
+			sourceTree = "<group>";
+		};
+		A50000021 /* Battleship */ = {
+			isa = PBXGroup;
+			children = (
+				A20000080 /* BattleshipGame.swift */,
+			);
+			path = Battleship;
 			sourceTree = "<group>";
 		};
 		A50000008 /* Utilities */ = {
@@ -379,6 +390,7 @@
 				A10000050 /* SnakeVsSnakeView.swift in Sources */,
 				A10000060 /* WarView.swift in Sources */,
 				A10000070 /* TutorialOverlayView.swift in Sources */,
+				A10000080 /* BattleshipGame.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -510,7 +522,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -548,7 +560,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
