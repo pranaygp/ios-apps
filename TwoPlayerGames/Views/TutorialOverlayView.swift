@@ -160,6 +160,18 @@ extension TutorialContent {
         controls: "Tap your side to flip your card"
     )
 
+    static let wordChain = TutorialContent(
+        title: "Word Chain",
+        emoji: "\u{1F4DA}",
+        rules: [
+            "Each word must start with the last letter of the previous word",
+            "Words must be at least 3 letters long",
+            "No repeating words — each word can only be used once",
+            "If the timer runs out on your turn, you lose!"
+        ],
+        controls: "Type your word and tap submit or press return"
+    )
+
     static let battleship = TutorialContent(
         title: "Battleship",
         emoji: "\u{1F6A2}",

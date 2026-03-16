@@ -39,6 +39,7 @@
 		A10000060 /* WarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000060; };
 		A10000070 /* TutorialOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000070; };
 		A10000080 /* BattleshipGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000080; };
+		A10000090 /* WordChainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000090; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -76,6 +77,7 @@
 		A20000060 /* WarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarView.swift; sourceTree = "<group>"; };
 		A20000070 /* TutorialOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialOverlayView.swift; sourceTree = "<group>"; };
 		A20000080 /* BattleshipGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleshipGame.swift; sourceTree = "<group>"; };
+		A20000090 /* WordChainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordChainView.swift; sourceTree = "<group>"; };
 		A30000001 /* TwoPlayerGames.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwoPlayerGames.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -141,6 +143,7 @@
 				A50000019 /* SnakeVsSnake */,
 				A50000020 /* War */,
 				A50000021 /* Battleship */,
+				A50000022 /* WordChain */,
 			);
 			path = Games;
 			sourceTree = "<group>";
@@ -261,6 +264,14 @@
 				A20000080 /* BattleshipGame.swift */,
 			);
 			path = Battleship;
+			sourceTree = "<group>";
+		};
+		A50000022 /* WordChain */ = {
+			isa = PBXGroup;
+			children = (
+				A20000090 /* WordChainView.swift */,
+			);
+			path = WordChain;
 			sourceTree = "<group>";
 		};
 		A50000008 /* Utilities */ = {
@@ -391,6 +402,7 @@
 				A10000060 /* WarView.swift in Sources */,
 				A10000070 /* TutorialOverlayView.swift in Sources */,
 				A10000080 /* BattleshipGame.swift in Sources */,
+				A10000090 /* WordChainView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -522,7 +534,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 18;
+				CURRENT_PROJECT_VERSION = 19;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -560,7 +572,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 18;
+				CURRENT_PROJECT_VERSION = 19;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
