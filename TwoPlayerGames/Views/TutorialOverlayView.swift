@@ -172,6 +172,18 @@ extension TutorialContent {
         controls: "Type your word and tap submit or press return"
     )
 
+    static let mazeRace = TutorialContent(
+        title: "Maze Race",
+        emoji: "\u{1F3C1}",
+        rules: [
+            "Both players race through the same maze at the same time",
+            "Navigate from the top-left corner to the flag at bottom-right",
+            "Walls block your path — find the route through!",
+            "First to 2 round wins takes the match"
+        ],
+        controls: "Swipe or tap adjacent cells to move through the maze"
+    )
+
     static let battleship = TutorialContent(
         title: "Battleship",
         emoji: "\u{1F6A2}",

@@ -24,6 +24,7 @@ class GameCenterManager: ObservableObject {
         case warWins = "com.windsorsoft.TwoPlayerGames.war.wins"
         case battleshipWins = "com.windsorsoft.TwoPlayerGames.battleship.wins"
         case wordChainWins = "com.windsorsoft.TwoPlayerGames.wordchain.wins"
+        case mazeRaceWins = "com.windsorsoft.TwoPlayerGames.mazerace.wins"
         case totalWins = "com.windsorsoft.TwoPlayerGames.total.wins"
     }
 
@@ -134,7 +135,7 @@ class GameCenterManager: ObservableObject {
             }
 
             // Try All Games
-            let gameTypes: [GameType] = [.pingPong, .airHockey, .ticTacToe, .connectFour, .reactionTime, .simonSays, .tugOfWar, .memoryMatch, .colorConquest, .sonarDuel, .dotsAndBoxes, .war, .battleship, .wordChain]
+            let gameTypes: [GameType] = [.pingPong, .airHockey, .ticTacToe, .connectFour, .reactionTime, .simonSays, .tugOfWar, .memoryMatch, .colorConquest, .sonarDuel, .dotsAndBoxes, .war, .battleship, .wordChain, .mazeRace]
             let gamesPlayed = gameTypes.filter { game in
                 UserDefaults.standard.integer(forKey: "wins_\(game.leaderboardID.rawValue)") > 0
             }.count
@@ -185,7 +186,7 @@ class GameCenterManager: ObservableObject {
 extension GameCenterManager {
     enum GameType {
         case pingPong, airHockey, ticTacToe, connectFour, reactionTime, simonSays
-        case tugOfWar, memoryMatch, colorConquest, sonarDuel, dotsAndBoxes, war, battleship, wordChain
+        case tugOfWar, memoryMatch, colorConquest, sonarDuel, dotsAndBoxes, war, battleship, wordChain, mazeRace
 
         var leaderboardID: LeaderboardID {
             switch self {
@@ -203,6 +204,7 @@ extension GameCenterManager {
             case .war: return .warWins
             case .battleship: return .battleshipWins
             case .wordChain: return .wordChainWins
+            case .mazeRace: return .mazeRaceWins
             }
         }
     }
