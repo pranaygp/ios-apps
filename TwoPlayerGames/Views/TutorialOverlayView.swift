@@ -184,6 +184,18 @@ extension TutorialContent {
         controls: "Swipe or tap adjacent cells to move through the maze"
     )
 
+    static let rhythmTap = TutorialContent(
+        title: "Rhythm Tap",
+        emoji: "\u{1F3B5}",
+        rules: [
+            "Notes fall down 3 lanes — tap them when they reach the hit zone",
+            "Perfect timing = 100pts, Good = 50pts, Miss = 0pts",
+            "Build combos with consecutive hits for bonus points",
+            "Highest score after 60 seconds wins the round — best of 3!"
+        ],
+        controls: "Tap the lane where the note reaches the target circle"
+    )
+
     static let battleship = TutorialContent(
         title: "Battleship",
         emoji: "\u{1F6A2}",

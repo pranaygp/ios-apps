@@ -25,6 +25,7 @@ class GameCenterManager: ObservableObject {
         case battleshipWins = "com.windsorsoft.TwoPlayerGames.battleship.wins"
         case wordChainWins = "com.windsorsoft.TwoPlayerGames.wordchain.wins"
         case mazeRaceWins = "com.windsorsoft.TwoPlayerGames.mazerace.wins"
+        case rhythmTapWins = "com.windsorsoft.TwoPlayerGames.rhythmtap.wins"
         case totalWins = "com.windsorsoft.TwoPlayerGames.total.wins"
     }
 
@@ -186,7 +187,7 @@ class GameCenterManager: ObservableObject {
 extension GameCenterManager {
     enum GameType {
         case pingPong, airHockey, ticTacToe, connectFour, reactionTime, simonSays
-        case tugOfWar, memoryMatch, colorConquest, sonarDuel, dotsAndBoxes, war, battleship, wordChain, mazeRace
+        case tugOfWar, memoryMatch, colorConquest, sonarDuel, dotsAndBoxes, war, battleship, wordChain, mazeRace, rhythmTap
 
         var leaderboardID: LeaderboardID {
             switch self {
@@ -205,6 +206,7 @@ extension GameCenterManager {
             case .battleship: return .battleshipWins
             case .wordChain: return .wordChainWins
             case .mazeRace: return .mazeRaceWins
+            case .rhythmTap: return .rhythmTapWins
             }
         }
     }

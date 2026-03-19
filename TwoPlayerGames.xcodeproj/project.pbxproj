@@ -41,6 +41,7 @@
 		A10000080 /* BattleshipGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000080; };
 		A10000090 /* WordChainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000090; };
 		A10000100 /* MazeRaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000100; };
+		A10000110 /* RhythmTapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000110; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,6 +81,7 @@
 		A20000080 /* BattleshipGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleshipGame.swift; sourceTree = "<group>"; };
 		A20000090 /* WordChainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordChainView.swift; sourceTree = "<group>"; };
 		A20000100 /* MazeRaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MazeRaceView.swift; sourceTree = "<group>"; };
+		A20000110 /* RhythmTapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RhythmTapView.swift; sourceTree = "<group>"; };
 		A30000001 /* TwoPlayerGames.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwoPlayerGames.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -147,6 +149,7 @@
 				A50000021 /* Battleship */,
 				A50000022 /* WordChain */,
 				A50000023 /* MazeRace */,
+				A50000024 /* RhythmTap */,
 			);
 			path = Games;
 			sourceTree = "<group>";
@@ -285,6 +288,14 @@
 			path = MazeRace;
 			sourceTree = "<group>";
 		};
+		A50000024 /* RhythmTap */ = {
+			isa = PBXGroup;
+			children = (
+				A20000110 /* RhythmTapView.swift */,
+			);
+			path = RhythmTap;
+			sourceTree = "<group>";
+		};
 		A50000008 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -415,6 +426,7 @@
 				A10000080 /* BattleshipGame.swift in Sources */,
 				A10000090 /* WordChainView.swift in Sources */,
 				A10000100 /* MazeRaceView.swift in Sources */,
+				A10000110 /* RhythmTapView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -546,7 +558,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -584,7 +596,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

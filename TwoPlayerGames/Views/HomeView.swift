@@ -21,7 +21,7 @@ struct HomeView: View {
 
     enum GameType: Identifiable {
         case pingPong, airHockey, ticTacToe, connectFour, reactionTime, simonSays
-        case tugOfWar, memoryMatch, colorConquest, sonarDuel, dotsAndBoxes, snakeVsSnake, war, battleship, wordChain, mazeRace
+        case tugOfWar, memoryMatch, colorConquest, sonarDuel, dotsAndBoxes, snakeVsSnake, war, battleship, wordChain, mazeRace, rhythmTap
         var id: Self { self }
     }
 
@@ -137,6 +137,13 @@ struct HomeView: View {
             icon: "square.grid.3x3.middleright.filled",
             gradient: [Color(red: 0.1, green: 0.75, blue: 0.65), Color(red: 0.05, green: 0.5, blue: 0.45)],
             gameType: .mazeRace
+        ),
+        GameCard(
+            title: "Rhythm Tap",
+            subtitle: "Tap to the beat",
+            icon: "music.note.list",
+            gradient: [Color(red: 0.9, green: 0.2, blue: 0.6), Color(red: 0.6, green: 0.1, blue: 0.5)],
+            gameType: .rhythmTap
         ),
     ]
 
@@ -441,6 +448,8 @@ struct HomeView: View {
             WordChainView()
         case .mazeRace:
             MazeRaceView()
+        case .rhythmTap:
+            RhythmTapView()
         }
     }
 }
