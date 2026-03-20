@@ -196,6 +196,18 @@ extension TutorialContent {
         controls: "Tap the lane where the note reaches the target circle"
     )
 
+    static let duelDraw = TutorialContent(
+        title: "Duel Draw",
+        emoji: "\u{1F3A8}",
+        rules: [
+            "One player draws a secret word while the other guesses",
+            "Roles alternate each round — 8 rounds total",
+            "Guess correctly for points — faster guesses earn a time bonus",
+            "If time runs out, the word is revealed and no points are scored"
+        ],
+        controls: "Drawer: draw with your finger. Guesser: type and submit guesses"
+    )
+
     static let battleship = TutorialContent(
         title: "Battleship",
         emoji: "\u{1F6A2}",
