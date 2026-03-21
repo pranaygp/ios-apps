@@ -208,6 +208,18 @@ extension TutorialContent {
         controls: "Drawer: draw with your finger. Guesser: type and submit guesses"
     )
 
+    static let checkers = TutorialContent(
+        title: "Checkers",
+        emoji: "\u{1F451}",
+        rules: [
+            "Move pieces diagonally forward on dark squares",
+            "Jump over opponent pieces to capture them — jumps are mandatory",
+            "Reach the opposite end to become a King (moves forward & backward)",
+            "Capture all enemy pieces or block them to win"
+        ],
+        controls: "Tap a piece to select, then tap a highlighted square to move"
+    )
+
     static let battleship = TutorialContent(
         title: "Battleship",
         emoji: "\u{1F6A2}",

@@ -21,7 +21,7 @@ struct HomeView: View {
 
     enum GameType: Identifiable {
         case pingPong, airHockey, ticTacToe, connectFour, reactionTime, simonSays
-        case tugOfWar, memoryMatch, colorConquest, sonarDuel, dotsAndBoxes, snakeVsSnake, war, battleship, wordChain, mazeRace, rhythmTap, duelDraw
+        case tugOfWar, memoryMatch, colorConquest, sonarDuel, dotsAndBoxes, snakeVsSnake, war, battleship, wordChain, mazeRace, rhythmTap, duelDraw, checkers
         var id: Self { self }
     }
 
@@ -151,6 +151,13 @@ struct HomeView: View {
             icon: "paintbrush.pointed.fill",
             gradient: [Color(red: 0.95, green: 0.4, blue: 0.2), Color(red: 0.85, green: 0.2, blue: 0.4)],
             gameType: .duelDraw
+        ),
+        GameCard(
+            title: "Checkers",
+            subtitle: "Classic board strategy",
+            icon: "checkerboard.rectangle",
+            gradient: [Color(red: 0.65, green: 0.35, blue: 0.15), Color(red: 0.45, green: 0.22, blue: 0.08)],
+            gameType: .checkers
         ),
     ]
 
@@ -459,6 +466,8 @@ struct HomeView: View {
             RhythmTapView()
         case .duelDraw:
             DuelDrawView()
+        case .checkers:
+            CheckersView()
         }
     }
 }
