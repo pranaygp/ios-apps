@@ -220,6 +220,18 @@ extension TutorialContent {
         controls: "Tap a piece to select, then tap a highlighted square to move"
     )
 
+    static let reversi = TutorialContent(
+        title: "Reversi",
+        emoji: "\u{26AB}",
+        rules: [
+            "Place a disc to outflank opponent discs in any direction",
+            "Outflanked discs (between your new disc and another of yours) flip to your color",
+            "Every move must flip at least one disc — no valid moves means you pass",
+            "Game ends when neither player can move. Most discs wins!"
+        ],
+        controls: "Tap an empty square with a valid move indicator to place your disc"
+    )
+
     static let battleship = TutorialContent(
         title: "Battleship",
         emoji: "\u{1F6A2}",

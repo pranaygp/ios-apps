@@ -44,6 +44,7 @@
 		A10000110 /* RhythmTapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000110; };
 		A10000120 /* DuelDrawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000120; };
 		A10000130 /* CheckersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000130; };
+		A10000140 /* ReversiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000140; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -86,6 +87,7 @@
 		A20000110 /* RhythmTapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RhythmTapView.swift; sourceTree = "<group>"; };
 		A20000120 /* DuelDrawView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuelDrawView.swift; sourceTree = "<group>"; };
 		A20000130 /* CheckersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckersView.swift; sourceTree = "<group>"; };
+		A20000140 /* ReversiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReversiView.swift; sourceTree = "<group>"; };
 		A30000001 /* TwoPlayerGames.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwoPlayerGames.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -156,6 +158,7 @@
 				A50000024 /* RhythmTap */,
 				A50000025 /* DuelDraw */,
 				A50000026 /* Checkers */,
+				A50000027 /* Reversi */,
 			);
 			path = Games;
 			sourceTree = "<group>";
@@ -318,6 +321,14 @@
 			path = Checkers;
 			sourceTree = "<group>";
 		};
+		A50000027 /* Reversi */ = {
+			isa = PBXGroup;
+			children = (
+				A20000140 /* ReversiView.swift */,
+			);
+			path = Reversi;
+			sourceTree = "<group>";
+		};
 		A50000008 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -451,6 +462,7 @@
 				A10000110 /* RhythmTapView.swift in Sources */,
 				A10000120 /* DuelDrawView.swift in Sources */,
 				A10000130 /* CheckersView.swift in Sources */,
+				A10000140 /* ReversiView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -582,7 +594,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -620,7 +632,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
