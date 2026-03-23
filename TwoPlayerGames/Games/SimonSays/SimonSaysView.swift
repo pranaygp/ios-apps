@@ -257,7 +257,7 @@ struct SimonSaysView: View {
                         Circle()
                             .fill(setter == 1 ? Color.blue : Color.red)
                             .frame(width: 10, height: 10)
-                        Text("P\(setter): Create a pattern")
+                        Text("\(PlayerProfileManager.shared.name(for: setter)): Create a pattern")
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundStyle(.white.opacity(0.7))
                     }
@@ -274,7 +274,7 @@ struct SimonSaysView: View {
                         Circle()
                             .fill(repeater == 1 ? Color.blue : Color.red)
                             .frame(width: 10, height: 10)
-                        Text("P\(repeater): Repeat! (\(playerInput.count)/\(pattern.count))")
+                        Text("\(PlayerProfileManager.shared.name(for: repeater)): Repeat! (\(playerInput.count)/\(pattern.count))")
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundStyle(.green)
                     }
@@ -371,7 +371,7 @@ struct SimonSaysView: View {
         let scorer = repeater
         withAnimation {
             if scorer == 1 { score1 += 1 } else { score2 += 1 }
-            roundResultText = "P\(scorer) got it! \u{1F389}"
+            roundResultText = "\(PlayerProfileManager.shared.name(for: scorer)) got it! \u{1F389}"
             roundResultColor = .green
             phase = .roundResult
         }
@@ -388,7 +388,7 @@ struct SimonSaysView: View {
         let scorer = setter
         withAnimation {
             if scorer == 1 { score1 += 1 } else { score2 += 1 }
-            roundResultText = "Wrong! P\(scorer) scores"
+            roundResultText = "Wrong! \(PlayerProfileManager.shared.name(for: scorer)) scores"
             roundResultColor = .red
             phase = .roundResult
         }

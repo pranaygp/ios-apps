@@ -135,7 +135,7 @@ struct TugOfWarView: View {
                     .animation(.easeOut(duration: 0.08), value: isFlashing)
 
                 VStack(spacing: 12) {
-                    Text("Player \(player)")
+                    Text(PlayerProfileManager.shared.name(for: player))
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(.white.opacity(0.5))
                         .textCase(.uppercase)
@@ -255,12 +255,12 @@ struct TugOfWarView: View {
 
                 // Score display
                 HStack {
-                    Text("P2")
+                    Text(PlayerProfileManager.shared.name(for: 2))
                         .font(.system(size: 11, weight: .bold))
                         .foregroundStyle(.red.opacity(0.6))
                         .rotationEffect(.degrees(180))
                     Spacer()
-                    Text("P1")
+                    Text(PlayerProfileManager.shared.name(for: 1))
                         .font(.system(size: 11, weight: .bold))
                         .foregroundStyle(.blue.opacity(0.6))
                 }
@@ -385,7 +385,7 @@ struct TugOfWarView: View {
             Color.black.opacity(0.5)
                 .ignoresSafeArea()
             VStack(spacing: 8) {
-                Text("Player \(winner)")
+                Text(PlayerProfileManager.shared.name(for: winner))
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(winner == 1 ? Color.blue : Color.red)
                     .textCase(.uppercase)

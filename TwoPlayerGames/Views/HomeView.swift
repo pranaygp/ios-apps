@@ -12,9 +12,13 @@ struct GameCard: Identifiable {
 struct HomeView: View {
     @EnvironmentObject var gameCenterManager: GameCenterManager
     @EnvironmentObject var sessionTracker: SessionTracker
+    @EnvironmentObject var profileManager: PlayerProfileManager
+    @EnvironmentObject var statsManager: GameStatsManager
     @State private var selectedGame: GameType?
     @State private var showSettings = false
     @State private var showSessionDetail = false
+    @State private var showPlayerSetup = false
+    @State private var showStats = false
     @State private var animateCards = false
     @State private var shimmerOffset: CGFloat = -200
     @State private var floatingPhase = false
@@ -231,6 +235,15 @@ struct HomeView: View {
         .sheet(isPresented: $showSessionDetail) {
             SessionDetailView()
         }
+        .sheet(isPresented: $showPlayerSetup) {
+            PlayerSetupView()
+                .environmentObject(profileManager)
+        }
+        .sheet(isPresented: $showStats) {
+            StatsView()
+                .environmentObject(statsManager)
+                .environmentObject(profileManager)
+        }
     }
 
     // MARK: - Session Score Card
@@ -243,12 +256,13 @@ struct HomeView: View {
             HStack(spacing: 16) {
                 // P1
                 VStack(spacing: 2) {
-                    Circle()
-                        .fill(Color.blue)
-                        .frame(width: 10, height: 10)
-                    Text("P1")
+                    Text(profileManager.player1.emoji)
+                        .font(.system(size: 14))
+                    Text(profileManager.player1.name)
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(.blue.opacity(0.7))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
                     Text("\(sessionTracker.player1Wins)")
                         .font(.system(size: 24, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
@@ -261,12 +275,13 @@ struct HomeView: View {
 
                 // P2
                 VStack(spacing: 2) {
-                    Circle()
-                        .fill(Color.red)
-                        .frame(width: 10, height: 10)
-                    Text("P2")
+                    Text(profileManager.player2.emoji)
+                        .font(.system(size: 14))
+                    Text(profileManager.player2.name)
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(.red.opacity(0.7))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
                     Text("\(sessionTracker.player2Wins)")
                         .font(.system(size: 24, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
@@ -380,6 +395,47 @@ struct HomeView: View {
                 Spacer()
 
                 HStack(spacing: 10) {
+                    // Players button
+                    Button {
+                        HapticManager.impact(.light)
+                        showPlayerSetup = true
+                    } label: {
+                        Image(systemName: "person.2.fill")
+                            .font(.system(size: 16))
+                            .foregroundStyle(.cyan.opacity(0.7))
+                            .frame(width: 44, height: 44)
+                            .background(
+                                Circle()
+                                    .fill(.ultraThinMaterial)
+                                    .environment(\.colorScheme, .dark)
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.cyan.opacity(0.12), lineWidth: 1)
+                            )
+                    }
+                    .accessibilityLabel("Players")
+
+                    // Stats button
+                    Button {
+                        HapticManager.impact(.light)
+                        showStats = true
+                    } label: {
+                        Text("📊")
+                            .font(.system(size: 20))
+                            .frame(width: 44, height: 44)
+                            .background(
+                                Circle()
+                                    .fill(.ultraThinMaterial)
+                                    .environment(\.colorScheme, .dark)
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.orange.opacity(0.12), lineWidth: 1)
+                            )
+                    }
+                    .accessibilityLabel("Statistics")
+
                     // Game Center button
                     if gameCenterManager.isAuthenticated {
                         Button {
@@ -495,10 +551,9 @@ struct SessionDetailView: View {
                     HStack {
                         Spacer()
                         VStack(spacing: 4) {
-                            Circle()
-                                .fill(Color.blue)
-                                .frame(width: 12, height: 12)
-                            Text("Player 1")
+                            Text(PlayerProfileManager.shared.emoji(for: 1))
+                                .font(.system(size: 20))
+                            Text(PlayerProfileManager.shared.name(for: 1))
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundStyle(.blue)
                             Text("\(sessionTracker.player1Wins)")
@@ -510,10 +565,9 @@ struct SessionDetailView: View {
                             .foregroundStyle(.secondary)
                         Spacer()
                         VStack(spacing: 4) {
-                            Circle()
-                                .fill(Color.red)
-                                .frame(width: 12, height: 12)
-                            Text("Player 2")
+                            Text(PlayerProfileManager.shared.emoji(for: 2))
+                                .font(.system(size: 20))
+                            Text(PlayerProfileManager.shared.name(for: 2))
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundStyle(.red)
                             Text("\(sessionTracker.player2Wins)")
@@ -657,4 +711,6 @@ struct GameCardView: View {
         .preferredColorScheme(.dark)
         .environmentObject(GameCenterManager.shared)
         .environmentObject(SessionTracker.shared)
+        .environmentObject(PlayerProfileManager.shared)
+        .environmentObject(GameStatsManager.shared)
 }

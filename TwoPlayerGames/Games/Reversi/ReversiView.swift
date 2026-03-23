@@ -113,7 +113,7 @@ struct ReversiView: View {
                             dismiss()
                         }
                     } else if isDraw {
-                        DrawOverlay {
+                        DrawOverlay(gameName: "Reversi") {
                             resetGame()
                         } onExit: {
                             dismiss()
@@ -166,7 +166,7 @@ struct ReversiView: View {
                             .stroke(currentDisc == .black ? Color.white.opacity(0.2) : Color.black.opacity(0.15), lineWidth: 1)
                     )
             }
-            Text("Player \(currentDisc.player)'s Turn")
+            Text("\(PlayerProfileManager.shared.name(for: currentDisc.player))'s Turn")
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundStyle(.white.opacity(0.6))
         }
@@ -438,7 +438,7 @@ struct ReversiView: View {
     // MARK: - Pass Toast
 
     private func showPassToast(player: Int) {
-        passMessageText = "No valid moves — Player \(player) passes"
+        passMessageText = "No valid moves — \(PlayerProfileManager.shared.name(for: player)) passes"
         HapticManager.impact(.medium)
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
             showPassMessage = true

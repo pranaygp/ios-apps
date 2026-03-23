@@ -345,7 +345,7 @@ struct DuelDrawView: View {
                             dismiss()
                         }
                     } else {
-                        DrawOverlay(onPlayAgain: {
+                        DrawOverlay(gameName: "Duel Draw", onPlayAgain: {
                             engine.startGame()
                         }, onExit: {
                             engine.cleanup()
@@ -847,12 +847,12 @@ struct DuelDrawView: View {
                 .font(.system(size: 20, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
             HStack(spacing: 4) {
-                Text("P\(engine.drawer) draws")
+                Text("\(PlayerProfileManager.shared.name(for: engine.drawer)) draws")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(engine.drawer == 1 ? .blue : .red)
                 Text("·")
                     .foregroundStyle(.white.opacity(0.3))
-                Text("P\(engine.guesser) guesses")
+                Text("\(PlayerProfileManager.shared.name(for: engine.guesser)) guesses")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(engine.guesser == 1 ? .blue : .red)
             }

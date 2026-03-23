@@ -309,6 +309,12 @@ struct WarView: View {
     @State private var cardFlip1: Double = 0
     @State private var cardFlip2: Double = 0
 
+    private var displayRoundMessage: String {
+        engine.roundMessage
+            .replacingOccurrences(of: "Player 1", with: PlayerProfileManager.shared.name(for: 1))
+            .replacingOccurrences(of: "Player 2", with: PlayerProfileManager.shared.name(for: 2))
+    }
+
     var body: some View {
         GameTransitionView {
             ZStack {
@@ -430,7 +436,7 @@ struct WarView: View {
                     // Deck count
                     HStack(spacing: 8) {
                         Circle().fill(Color.blue).frame(width: 10, height: 10)
-                        Text("Player 1")
+                        Text(PlayerProfileManager.shared.name(for: 1))
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundStyle(.blue)
                         Text("·")
@@ -477,7 +483,7 @@ struct WarView: View {
 
                     HStack(spacing: 8) {
                         Circle().fill(Color.red).frame(width: 10, height: 10)
-                        Text("Player 2")
+                        Text(PlayerProfileManager.shared.name(for: 2))
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundStyle(.red)
                         Text("·")
@@ -507,7 +513,7 @@ struct WarView: View {
         HStack {
             // Round message
             if !engine.roundMessage.isEmpty {
-                Text(engine.roundMessage)
+                Text(displayRoundMessage)
                     .font(.system(size: engine.roundMessage.contains("WAR") ? 22 : 16, weight: .bold, design: .rounded))
                     .foregroundStyle(engine.roundMessage.contains("WAR") ? .orange : .white.opacity(0.7))
                     .shadow(color: engine.roundMessage.contains("WAR") ? .orange.opacity(0.5) : .clear, radius: 8)

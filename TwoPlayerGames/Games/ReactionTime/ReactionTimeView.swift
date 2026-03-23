@@ -133,7 +133,7 @@ struct ReactionTimeView: View {
                     .animation(.easeInOut(duration: 0.3), value: phaseColorAnimation)
 
                 VStack(spacing: 12) {
-                    Text("Player \(player)")
+                    Text(PlayerProfileManager.shared.name(for: player))
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(.white.opacity(0.5))
                         .textCase(.uppercase)
@@ -273,7 +273,7 @@ struct ReactionTimeView: View {
                             .foregroundStyle(.orange)
                     case .scored:
                         if let winner = roundWinner {
-                            Text("P\(winner) scores!")
+                            Text("\(PlayerProfileManager.shared.name(for: winner)) scores!")
                                 .font(.system(size: 18, weight: .semibold))
                                 .foregroundStyle(.green)
                         }

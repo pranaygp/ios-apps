@@ -41,7 +41,7 @@ struct ConnectFourView: View {
                                 .fill(currentPlayer == 1 ? Color.red : Color.yellow)
                                 .frame(width: 12, height: 12)
                                 .shadow(color: (currentPlayer == 1 ? Color.red : Color.yellow).opacity(0.5), radius: 4)
-                            Text("Player \(currentPlayer)'s Turn")
+                            Text("\(PlayerProfileManager.shared.name(for: currentPlayer))'s Turn")
                                 .font(.system(size: 15, weight: .semibold))
                                 .foregroundStyle(.white.opacity(0.6))
                         }
@@ -80,7 +80,7 @@ struct ConnectFourView: View {
                             dismiss()
                         }
                     } else if isDraw {
-                        DrawOverlay {
+                        DrawOverlay(gameName: "Connect Four") {
                             resetBoard()
                         } onExit: {
                             dismiss()

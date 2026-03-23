@@ -698,7 +698,7 @@ struct RhythmTapView: View {
         }()
         let bannerText: String = {
             if let rw = engine.roundWinner {
-                return "Player \(rw)"
+                return PlayerProfileManager.shared.name(for: rw)
             }
             return "Tie!"
         }()
@@ -716,7 +716,7 @@ struct RhythmTapView: View {
 
             HStack(spacing: 20) {
                 VStack(spacing: 2) {
-                    Text("P1")
+                    Text(PlayerProfileManager.shared.name(for: 1))
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(.blue.opacity(0.7))
                     Text("\(engine.p1RoundScore)")
@@ -727,7 +727,7 @@ struct RhythmTapView: View {
                     .font(.system(size: 12))
                     .foregroundStyle(.white.opacity(0.4))
                 VStack(spacing: 2) {
-                    Text("P2")
+                    Text(PlayerProfileManager.shared.name(for: 2))
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(.red.opacity(0.7))
                     Text("\(engine.p2RoundScore)")

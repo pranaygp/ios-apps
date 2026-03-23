@@ -114,7 +114,7 @@ struct CheckersView: View {
                             dismiss()
                         }
                     } else if isDraw {
-                        DrawOverlay {
+                        DrawOverlay(gameName: "Checkers") {
                             resetGame()
                         } onExit: {
                             dismiss()
@@ -157,7 +157,7 @@ struct CheckersView: View {
                 .fill(currentPlayer == 1 ? Color.blue : Color.red)
                 .frame(width: 12, height: 12)
                 .shadow(color: (currentPlayer == 1 ? Color.blue : Color.red).opacity(0.5), radius: 4)
-            Text("Player \(currentPlayer)'s Turn")
+            Text("\(PlayerProfileManager.shared.name(for: currentPlayer))'s Turn")
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundStyle(.white.opacity(0.6))
             if !mustJumpMoves.isEmpty {

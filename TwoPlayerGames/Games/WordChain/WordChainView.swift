@@ -460,7 +460,7 @@ struct WordChainView: View {
             Circle()
                 .fill(engine.activePlayer == 1 ? Color.blue : Color.red)
                 .frame(width: 10, height: 10)
-            Text("Player \(engine.activePlayer)'s turn")
+            Text("\(PlayerProfileManager.shared.name(for: engine.activePlayer))'s turn")
                 .font(.system(size: 15, weight: .semibold, design: .rounded))
                 .foregroundStyle(engine.activePlayer == 1 ? Color.blue : Color.red)
 

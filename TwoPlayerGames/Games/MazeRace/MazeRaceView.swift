@@ -593,7 +593,7 @@ struct MazeRaceView: View {
     private func roundBannerOverlay(winner: Int) -> some View {
         let color: Color = winner == 1 ? .blue : .red
         return VStack(spacing: 6) {
-            Text("Player \(winner)")
+            Text(PlayerProfileManager.shared.name(for: winner))
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(color)
                 .textCase(.uppercase)

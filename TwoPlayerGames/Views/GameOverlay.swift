@@ -140,12 +140,13 @@ struct PauseOverlay: View {
                 // Score display
                 HStack(spacing: 24) {
                     VStack(spacing: 4) {
-                        Circle()
-                            .fill(player1Color)
-                            .frame(width: 12, height: 12)
-                        Text("P1")
+                        Text(PlayerProfileManager.shared.emoji(for: 1))
+                            .font(.system(size: 16))
+                        Text(PlayerProfileManager.shared.name(for: 1))
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(.white.opacity(0.5))
+                            .foregroundStyle(player1Color.opacity(0.8))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
                         Text("\(score1)")
                             .font(.system(size: 24, weight: .bold, design: .rounded))
                             .foregroundStyle(.white)
@@ -156,12 +157,13 @@ struct PauseOverlay: View {
                         .foregroundStyle(.white.opacity(0.3))
 
                     VStack(spacing: 4) {
-                        Circle()
-                            .fill(player2Color)
-                            .frame(width: 12, height: 12)
-                        Text("P2")
+                        Text(PlayerProfileManager.shared.emoji(for: 2))
+                            .font(.system(size: 16))
+                        Text(PlayerProfileManager.shared.name(for: 2))
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(.white.opacity(0.5))
+                            .foregroundStyle(player2Color.opacity(0.8))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
                         Text("\(score2)")
                             .font(.system(size: 24, weight: .bold, design: .rounded))
                             .foregroundStyle(.white)
@@ -272,16 +274,20 @@ struct FrostedScoreBanner: View {
     @State private var animatedScore: Int = 0
     @State private var scoreScale: CGFloat = 1.0
 
+    private var playerName: String {
+        PlayerProfileManager.shared.name(for: player)
+    }
+
     var body: some View {
         HStack {
             HStack(spacing: 8) {
-                Circle()
-                    .fill(color)
-                    .frame(width: 14, height: 14)
-                    .shadow(color: color.opacity(0.5), radius: 4)
-                Text("Player \(player)")
+                Text(PlayerProfileManager.shared.emoji(for: player))
+                    .font(.system(size: 16))
+                Text(playerName)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(color)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
             }
             Spacer()
             Text("\(animatedScore)")
@@ -291,7 +297,7 @@ struct FrostedScoreBanner: View {
                 .contentTransition(.numericText())
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Player \(player) score: \(animatedScore)")
+        .accessibilityLabel("\(playerName) score: \(animatedScore)")
         .padding(.horizontal, 24)
         .padding(.vertical, 14)
         .background(
@@ -338,6 +344,15 @@ struct WinnerOverlay: View {
         winner == 1 ? .blue : .red
     }
 
+    private var winnerName: String {
+        PlayerProfileManager.shared.name(for: winner)
+    }
+
+    private var headToHead: String? {
+        guard let name = gameName, let record = GameStatsManager.shared.stats[name] else { return nil }
+        return "\(record.p1Wins) - \(record.p2Wins)"
+    }
+
     var body: some View {
         ZStack {
             // Dimmed background with color tint
@@ -381,11 +396,13 @@ struct WinnerOverlay: View {
 
                 // Winner text
                 VStack(spacing: 6) {
-                    Text("Player \(winner)")
+                    Text(winnerName)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(winnerColor)
                         .textCase(.uppercase)
                         .tracking(2)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
                         .opacity(showContent ? 1 : 0)
                         .offset(y: showContent ? 0 : 10)
 
@@ -400,6 +417,13 @@ struct WinnerOverlay: View {
                         )
                         .opacity(showContent ? 1 : 0)
                         .offset(y: showContent ? 0 : textOffset)
+
+                    if let h2h = headToHead {
+                        Text(h2h)
+                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.5))
+                            .opacity(showContent ? 1 : 0)
+                    }
                 }
                 .animation(.spring(response: 0.5, dampingFraction: 0.7).delay(0.1), value: showContent)
 
@@ -496,9 +520,10 @@ struct WinnerOverlay: View {
                 GameCenterManager.shared.reportWin(for: gameType)
             }
 
-            // Report win to session tracker
+            // Report win to session tracker and stats
             if let gameName {
                 SessionTracker.shared.recordWin(player: winner, gameType: gameName)
+                GameStatsManager.shared.recordWin(player: winner, game: gameName)
             }
         }
     }
@@ -507,6 +532,7 @@ struct WinnerOverlay: View {
 // MARK: - Draw Overlay
 
 struct DrawOverlay: View {
+    var gameName: String? = nil
     let onPlayAgain: () -> Void
     let onExit: () -> Void
 
@@ -582,7 +608,12 @@ struct DrawOverlay: View {
             .opacity(showContent ? 1 : 0)
             .animation(.spring(response: 0.4, dampingFraction: 0.75), value: showContent)
         }
-        .onAppear { showContent = true }
+        .onAppear {
+            showContent = true
+            if let gameName {
+                GameStatsManager.shared.recordDraw(game: gameName)
+            }
+        }
     }
 }
 

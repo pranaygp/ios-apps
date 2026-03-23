@@ -84,7 +84,7 @@ struct MemoryMatchView: View {
                 }
 
                 if isDraw {
-                    DrawOverlay {
+                    DrawOverlay(gameName: "Memory Match") {
                         resetGame()
                     } onExit: {
                         dismiss()
@@ -126,7 +126,7 @@ struct MemoryMatchView: View {
                 .fill(currentPlayer == 1 ? Color.blue : Color.red)
                 .frame(width: 10, height: 10)
                 .shadow(color: (currentPlayer == 1 ? Color.blue : Color.red).opacity(0.5), radius: 4)
-            Text("Player \(currentPlayer)'s Turn")
+            Text("\(PlayerProfileManager.shared.name(for: currentPlayer))'s Turn")
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(currentPlayer == 1 ? Color.blue : Color.red)
         }

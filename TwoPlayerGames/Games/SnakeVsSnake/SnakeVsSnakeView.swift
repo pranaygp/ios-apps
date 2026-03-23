@@ -352,7 +352,7 @@ struct SnakeVsSnakeView: View {
 
                 if showResult {
                     if engine.isDraw {
-                        DrawOverlay {
+                        DrawOverlay(gameName: "Snake vs Snake") {
                             restartGame()
                         } onExit: {
                             dismiss()
@@ -558,7 +558,7 @@ struct SnakeVsSnakeView: View {
             Circle()
                 .fill(color)
                 .frame(width: 10, height: 10)
-            Text("P\(player): \(score)")
+            Text("\(PlayerProfileManager.shared.name(for: player)): \(score)")
                 .font(.system(size: 14, weight: .bold, design: .monospaced))
                 .foregroundColor(color)
         }

@@ -57,7 +57,7 @@ struct TicTacToeView: View {
                                 .fill(isXTurn ? Color.blue : Color.red)
                                 .frame(width: 10, height: 10)
                                 .shadow(color: (isXTurn ? Color.blue : Color.red).opacity(0.5), radius: 4)
-                            Text("\(isXTurn ? "X" : "O")'s Turn")
+                            Text("\(PlayerProfileManager.shared.name(for: isXTurn ? 1 : 2))'s Turn")
                                 .font(.system(size: 18, weight: .semibold))
                                 .foregroundStyle(isXTurn ? Color.blue : Color.red)
                         }
@@ -92,7 +92,7 @@ struct TicTacToeView: View {
                             dismiss()
                         }
                     } else if isDraw {
-                        DrawOverlay {
+                        DrawOverlay(gameName: "Tic Tac Toe") {
                             resetBoard()
                         } onExit: {
                             dismiss()

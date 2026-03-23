@@ -146,7 +146,7 @@ struct ColorConquestView: View {
                     .fill(color)
                     .frame(width: 14, height: 14)
                     .shadow(color: color.opacity(0.5), radius: 4)
-                Text("P\(player)")
+                Text(PlayerProfileManager.shared.name(for: player))
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(color)
             }

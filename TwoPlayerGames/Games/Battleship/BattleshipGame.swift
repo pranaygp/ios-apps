@@ -191,7 +191,7 @@ struct BattleshipView: View {
                         .fill(player == 1 ? Color.blue : Color.red)
                         .frame(width: 12, height: 12)
                         .shadow(color: (player == 1 ? Color.blue : Color.red).opacity(0.5), radius: 4)
-                    Text("Player \(player) — Place Your Ships")
+                    Text("\(PlayerProfileManager.shared.name(for: player)) — Place Your Ships")
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(.white.opacity(0.8))
                 }
@@ -220,9 +220,9 @@ struct BattleshipView: View {
                     SoundManager.playButtonTap()
                     withAnimation(.easeInOut(duration: 0.3)) {
                         if player == 1 {
-                            phase = .passDevice(nextPlayer: 2, message: "Pass the device to Player 2")
+                            phase = .passDevice(nextPlayer: 2, message: "Pass the device to \(PlayerProfileManager.shared.name(for: 2))")
                         } else {
-                            phase = .passDevice(nextPlayer: 1, message: "Pass to Player 1 to fire first")
+                            phase = .passDevice(nextPlayer: 1, message: "Pass to \(PlayerProfileManager.shared.name(for: 1)) to fire first")
                         }
                     }
                 } label: {
@@ -475,7 +475,7 @@ struct BattleshipView: View {
                     .fill(currentPlayer == 1 ? Color.blue : Color.red)
                     .frame(width: 12, height: 12)
                     .shadow(color: (currentPlayer == 1 ? Color.blue : Color.red).opacity(0.5), radius: 4)
-                Text("Player \(currentPlayer)'s Turn")
+                Text("\(PlayerProfileManager.shared.name(for: currentPlayer))'s Turn")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(.white.opacity(0.7))
             }
@@ -726,7 +726,7 @@ struct BattleshipView: View {
         let nextPlayer = currentPlayer == 1 ? 2 : 1
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
             withAnimation(.easeInOut(duration: 0.3)) {
-                phase = .passDevice(nextPlayer: nextPlayer, message: "Pass to Player \(nextPlayer)")
+                phase = .passDevice(nextPlayer: nextPlayer, message: "Pass to \(PlayerProfileManager.shared.name(for: nextPlayer))")
             }
         }
     }

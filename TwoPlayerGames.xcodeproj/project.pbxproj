@@ -45,6 +45,10 @@
 		A10000120 /* DuelDrawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000120; };
 		A10000130 /* CheckersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000130; };
 		A10000140 /* ReversiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000140; };
+		A10000150 /* PlayerProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000150; };
+		A10000160 /* GameStatsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000160; };
+		A10000170 /* PlayerSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000170; };
+		A10000180 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000180; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -88,6 +92,10 @@
 		A20000120 /* DuelDrawView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuelDrawView.swift; sourceTree = "<group>"; };
 		A20000130 /* CheckersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckersView.swift; sourceTree = "<group>"; };
 		A20000140 /* ReversiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReversiView.swift; sourceTree = "<group>"; };
+		A20000150 /* PlayerProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProfile.swift; sourceTree = "<group>"; };
+		A20000160 /* GameStatsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStatsManager.swift; sourceTree = "<group>"; };
+		A20000170 /* PlayerSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSetupView.swift; sourceTree = "<group>"; };
+		A20000180 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		A30000001 /* TwoPlayerGames.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwoPlayerGames.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -119,6 +127,7 @@
 				A50000003 /* Views */,
 				A50000004 /* Games */,
 				A50000008 /* Utilities */,
+				A50000028 /* Models */,
 				A20000011 /* Assets.xcassets */,
 				A50000010 /* Preview Content */,
 			);
@@ -132,6 +141,8 @@
 				A20000003 /* GameOverlay.swift */,
 				A20000014 /* SettingsView.swift */,
 				A20000070 /* TutorialOverlayView.swift */,
+				A20000170 /* PlayerSetupView.swift */,
+				A20000180 /* StatsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -357,6 +368,15 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		A50000028 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A20000150 /* PlayerProfile.swift */,
+				A20000160 /* GameStatsManager.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -463,6 +483,10 @@
 				A10000120 /* DuelDrawView.swift in Sources */,
 				A10000130 /* CheckersView.swift in Sources */,
 				A10000140 /* ReversiView.swift in Sources */,
+				A10000150 /* PlayerProfile.swift in Sources */,
+				A10000160 /* GameStatsManager.swift in Sources */,
+				A10000170 /* PlayerSetupView.swift in Sources */,
+				A10000180 /* StatsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -594,7 +618,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 25;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -632,7 +656,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 25;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

@@ -62,7 +62,7 @@ struct DotsAndBoxesView: View {
                                 .fill(currentPlayer == 1 ? Color.blue : Color.red)
                                 .frame(width: 12, height: 12)
                                 .shadow(color: (currentPlayer == 1 ? Color.blue : Color.red).opacity(0.5), radius: 4)
-                            Text(extraTurn ? "Extra Turn!" : "Player \(currentPlayer)'s Turn")
+                            Text(extraTurn ? "Extra Turn!" : "\(PlayerProfileManager.shared.name(for: currentPlayer))'s Turn")
                                 .font(.system(size: 15, weight: .semibold))
                                 .foregroundStyle(.white.opacity(0.6))
                         }
@@ -101,7 +101,7 @@ struct DotsAndBoxesView: View {
                             dismiss()
                         }
                     } else if isDraw {
-                        DrawOverlay {
+                        DrawOverlay(gameName: "Dots & Boxes") {
                             resetBoard()
                         } onExit: {
                             dismiss()
