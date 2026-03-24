@@ -273,6 +273,7 @@ struct FrostedScoreBanner: View {
 
     @State private var animatedScore: Int = 0
     @State private var scoreScale: CGFloat = 1.0
+    @State private var scoreColorFlash: Bool = false
 
     private var playerName: String {
         PlayerProfileManager.shared.name(for: player)
@@ -292,7 +293,7 @@ struct FrostedScoreBanner: View {
             Spacer()
             Text("\(animatedScore)")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+                .foregroundStyle(scoreColorFlash ? color : .white)
                 .scaleEffect(scoreScale)
                 .contentTransition(.numericText())
         }
@@ -315,10 +316,16 @@ struct FrostedScoreBanner: View {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
                 scoreScale = 1.3
                 animatedScore = newVal
+                scoreColorFlash = true
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                 withAnimation(.spring(response: 0.2, dampingFraction: 0.6)) {
                     scoreScale = 1.0
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                withAnimation(.easeOut(duration: 0.2)) {
+                    scoreColorFlash = false
                 }
             }
         }
@@ -339,6 +346,9 @@ struct WinnerOverlay: View {
     @State private var trophyBounce = false
     @State private var glowPulse = false
     @State private var textOffset: CGFloat = 30
+    @State private var shakeScreen = false
+    @State private var showButtons = false
+    @State private var winTextScale: CGFloat = 0.3
 
     private var winnerColor: Color {
         winner == 1 ? .blue : .red
@@ -364,7 +374,7 @@ struct WinnerOverlay: View {
             .animation(.easeOut(duration: 0.4), value: showContent)
 
             if showConfetti {
-                ConfettiView()
+                ConfettiView(tintColor: winnerColor)
                     .ignoresSafeArea()
                     .allowsHitTesting(false)
             }
@@ -415,6 +425,7 @@ struct WinnerOverlay: View {
                                 endPoint: .trailing
                             )
                         )
+                        .scaleEffect(winTextScale)
                         .opacity(showContent ? 1 : 0)
                         .offset(y: showContent ? 0 : textOffset)
 
@@ -474,11 +485,12 @@ struct WinnerOverlay: View {
                     }
                     .accessibilityLabel("Go to Home")
                 }
-                .opacity(showContent ? 1 : 0)
-                .offset(y: showContent ? 0 : 20)
-                .animation(.spring(response: 0.5, dampingFraction: 0.7).delay(0.25), value: showContent)
+                .opacity(showButtons ? 1 : 0)
+                .offset(y: showButtons ? 0 : 20)
+                .animation(.spring(response: 0.5, dampingFraction: 0.7), value: showButtons)
             }
             .padding(40)
+            .screenShake(trigger: $shakeScreen)
             .background(
                 RoundedRectangle(cornerRadius: 28)
                     .fill(.ultraThinMaterial)
@@ -502,8 +514,18 @@ struct WinnerOverlay: View {
         }
         .onAppear {
             showContent = true
+            // Screen shake on win
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                shakeScreen = true
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                 showConfetti = true
+            }
+            // Bounce in the "Wins!" text
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.5)) {
+                    winTextScale = 1.0
+                }
             }
             // Trophy bounce loop
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -513,6 +535,10 @@ struct WinnerOverlay: View {
                 withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                     glowPulse = true
                 }
+            }
+            // Delayed button entry
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                showButtons = true
             }
 
             // Report win to Game Center
@@ -537,6 +563,7 @@ struct DrawOverlay: View {
     let onExit: () -> Void
 
     @State private var showContent = false
+    @State private var showButtons = false
 
     var body: some View {
         ZStack {
@@ -593,6 +620,9 @@ struct DrawOverlay: View {
                         )
                     }
                 }
+                .opacity(showButtons ? 1 : 0)
+                .offset(y: showButtons ? 0 : 15)
+                .animation(.spring(response: 0.4, dampingFraction: 0.7), value: showButtons)
             }
             .padding(40)
             .background(
@@ -610,6 +640,9 @@ struct DrawOverlay: View {
         }
         .onAppear {
             showContent = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                showButtons = true
+            }
             if let gameName {
                 GameStatsManager.shared.recordDraw(game: gameName)
             }
@@ -620,6 +653,7 @@ struct DrawOverlay: View {
 // MARK: - Confetti
 
 struct ConfettiView: View {
+    var tintColor: Color? = nil
     @State private var particles: [ConfettiParticle] = []
 
     struct ConfettiParticle: Identifiable {
@@ -642,11 +676,13 @@ struct ConfettiView: View {
                 }
             }
             .onAppear {
-                let colors: [Color] = [
+                let baseColors: [Color] = [
                     .yellow, .blue, .red, .green, .purple, .orange, .pink,
                     .cyan, .mint, Color(red: 1, green: 0.8, blue: 0), Color(red: 1, green: 0.4, blue: 0.7)
                 ]
-                particles = (0..<60).map { _ in
+                // Mix in tint color if provided (30% tinted, 70% random)
+                let colors: [Color] = baseColors + (tintColor.map { Array(repeating: $0, count: 5) } ?? [])
+                particles = (0..<80).map { _ in
                     ConfettiParticle(
                         x: CGFloat.random(in: -20...(geo.size.width + 20)),
                         color: colors.randomElement()!,

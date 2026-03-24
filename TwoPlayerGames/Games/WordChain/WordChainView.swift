@@ -173,6 +173,13 @@ final class WordChainEngine {
                     return
                 }
                 self.timeRemaining -= 0.05
+                // Haptic tick in last 5 seconds
+                if self.timeRemaining <= 5 && self.timeRemaining > 0 {
+                    let rounded = self.timeRemaining + 0.025
+                    if rounded.truncatingRemainder(dividingBy: 1.0) < 0.08 {
+                        HapticManager.impact(.light)
+                    }
+                }
                 if self.timeRemaining <= 0 {
                     self.timeUp()
                 }
@@ -451,6 +458,7 @@ struct WordChainView: View {
             }
         }
         .frame(height: 12)
+        .timerUrgency(timeRemaining: engine.timeRemaining)
     }
 
     // MARK: - Active Player Badge

@@ -323,6 +323,7 @@ struct ColorConquestView: View {
                     )
                     .frame(width: 28)
                     .contentTransition(.numericText())
+                    .timerUrgency(timeRemaining: timeRemaining)
             }
             .padding(.horizontal, 16)
         }
@@ -403,6 +404,13 @@ struct ColorConquestView: View {
             DispatchQueue.main.async {
                 guard gameActive, !isPaused else { return }
                 timeRemaining -= 0.1
+                // Haptic tick in last 5 seconds (on each whole second)
+                if timeRemaining <= 5 && timeRemaining > 0 {
+                    let rounded = timeRemaining + 0.05
+                    if rounded.truncatingRemainder(dividingBy: 1.0) < 0.15 {
+                        HapticManager.impact(.light)
+                    }
+                }
                 if timeRemaining <= 0 {
                     timeRemaining = 0
                     endGame()

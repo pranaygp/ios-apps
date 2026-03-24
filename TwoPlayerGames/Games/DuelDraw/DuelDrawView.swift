@@ -243,6 +243,13 @@ final class DuelDrawEngine {
                     return
                 }
                 self.timeRemaining -= 0.05
+                // Haptic tick in last 5 seconds
+                if self.timeRemaining <= 5 && self.timeRemaining > 0 {
+                    let rounded = self.timeRemaining + 0.025
+                    if rounded.truncatingRemainder(dividingBy: 1.0) < 0.08 {
+                        HapticManager.impact(.light)
+                    }
+                }
                 if self.timeRemaining <= 0 {
                     self.timeRemaining = 0
                     self.timeUp()
@@ -836,6 +843,7 @@ struct DuelDrawView: View {
                 .font(.system(size: 10, weight: .bold, design: .monospaced))
                 .foregroundStyle(engine.timerColor)
                 .frame(width: 22, alignment: .trailing)
+                .timerUrgency(timeRemaining: engine.timeRemaining)
         }
     }
 

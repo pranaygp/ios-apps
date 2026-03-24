@@ -703,6 +703,7 @@ struct GameCardView: View {
             RoundedRectangle(cornerRadius: 18)
                 .stroke(Color.white.opacity(0.08), lineWidth: 1)
         )
+        .shimmer()
     }
 }
 
