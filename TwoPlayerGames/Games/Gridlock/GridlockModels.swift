@@ -427,7 +427,7 @@ struct AutomationPipeline: Identifiable, Codable {
 
 // MARK: - Player State
 
-struct PlayerState: Codable {
+struct GridlockPlayerState: Codable {
     var resources: Resources
     var ap: Int
     var maxAP: Int

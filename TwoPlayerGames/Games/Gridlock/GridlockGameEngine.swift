@@ -6,7 +6,7 @@ class GridlockGameEngine: ObservableObject {
     @Published var cells: [HexCoord: HexCell] = [:]
     @Published var buildings: [Building] = []
     @Published var units: [GameUnit] = []
-    @Published var playerStates: [Int: PlayerState] = [1: PlayerState(), 2: PlayerState()]
+    @Published var playerStates: [Int: GridlockPlayerState] = [1: GridlockPlayerState(), 2: GridlockPlayerState()]
     @Published var phase: GridlockPhase = .setup
     @Published var currentPlayer: Int = 1
     @Published var tickCount: Int = 0
@@ -24,7 +24,7 @@ class GridlockGameEngine: ObservableObject {
         cells = map.cells
         buildings = []
         units = []
-        playerStates = [1: PlayerState(), 2: PlayerState()]
+        playerStates = [1: GridlockPlayerState(), 2: GridlockPlayerState()]
         tickCount = 0
         gameTimeRemaining = 600
         combatLog = []

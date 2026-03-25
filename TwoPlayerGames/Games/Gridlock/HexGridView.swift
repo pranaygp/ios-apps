@@ -225,7 +225,7 @@ struct HexGridView: View {
 
                 ZStack {
                     // Unit triangle
-                    Triangle()
+                    GridlockTriangle()
                         .fill(color.opacity(0.8))
                         .frame(width: size, height: size)
                         .shadow(color: color.opacity(0.5), radius: 3)
@@ -302,7 +302,7 @@ struct HexGridView: View {
 
 // MARK: - Triangle Shape
 
-struct Triangle: Shape {
+struct GridlockTriangle: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
         path.move(to: CGPoint(x: rect.midX, y: rect.minY))

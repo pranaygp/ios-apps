@@ -84,6 +84,8 @@ struct GridlockView: View {
                     PauseOverlay(
                         score1: playerScore(1),
                         score2: playerScore(2),
+                        player1Color: .cyan,
+                        player2Color: .red,
                         onResume: { isPaused = false },
                         onRestart: { restartGame() },
                         onExit: { dismiss() }
@@ -94,15 +96,11 @@ struct GridlockView: View {
                     if winner > 0 {
                         WinnerOverlay(
                             winner: winner,
-                            score1: playerScore(1),
-                            score2: playerScore(2),
                             onPlayAgain: { restartGame() },
                             onExit: { dismiss() }
                         )
                     } else {
                         DrawOverlay(
-                            score1: playerScore(1),
-                            score2: playerScore(2),
                             onPlayAgain: { restartGame() },
                             onExit: { dismiss() }
                         )
@@ -124,7 +122,7 @@ struct GridlockView: View {
                 engine.stopTimers()
                 winner = w
                 if w > 0 {
-                    sessionTracker.recordWin(for: w, game: "Gridlock")
+                    sessionTracker.recordWin(player: w, gameType: "Gridlock")
                     statsManager.recordWin(player: w, game: "Gridlock")
                     SoundManager.playWin()
                 } else {
