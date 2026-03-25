@@ -69,12 +69,17 @@ struct HomeView: View {
     }
 
     enum GameType: Identifiable {
+        case gridlock
         case pingPong, airHockey, ticTacToe, connectFour, reactionTime, simonSays
         case tugOfWar, memoryMatch, colorConquest, sonarDuel, dotsAndBoxes, snakeVsSnake, war, battleship, wordChain, mazeRace, rhythmTap, duelDraw, checkers, reversi
         var id: Self { self }
     }
 
     private let games = [
+        // Strategy (Gridlock first)
+        GameCard(title: "Gridlock", subtitle: "1v1 hex strategy • Build, Deploy, Automate", icon: "hexagon.fill",
+                 gradient: [Color(red: 0.1, green: 0.15, blue: 0.5), Color(red: 0.4, green: 0.1, blue: 0.6)],
+                 gameType: .gridlock, category: .strategy),
         // Action
         GameCard(title: "Ping Pong", subtitle: "Classic paddle battle", icon: "sportscourt",
                  gradient: [Color(red: 0.25, green: 0.55, blue: 1.0), Color(red: 0.1, green: 0.3, blue: 0.85)],
@@ -162,6 +167,17 @@ struct HomeView: View {
                     // Random Game button
                     randomGameButton
                         .padding(.horizontal, 20)
+
+                    // Featured Game
+                    Button {
+                        HapticManager.impact(.medium)
+                        SoundManager.playButtonTap()
+                        selectedGame = .gridlock
+                    } label: {
+                        FeaturedGridlockCard()
+                    }
+                    .buttonStyle(GameCardButtonStyle())
+                    .padding(.horizontal, 20)
 
                     // Game categories
                     VStack(spacing: 24) {
@@ -565,6 +581,8 @@ struct HomeView: View {
     @ViewBuilder
     private func gameView(for game: GameType) -> some View {
         switch game {
+        case .gridlock:
+            GridlockView()
         case .pingPong:
             PingPongView()
         case .airHockey:
@@ -776,6 +794,125 @@ struct GameCardView: View {
                 .stroke(Color.white.opacity(0.08), lineWidth: 1)
         )
         .shimmer()
+    }
+}
+
+// MARK: - Featured Gridlock Card
+
+struct FeaturedGridlockCard: View {
+    @State private var gradientPhase = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                // Icon
+                ZStack {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color(red: 0.1, green: 0.15, blue: 0.5), Color(red: 0.4, green: 0.1, blue: 0.6)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 56, height: 56)
+                        .shadow(color: Color.purple.opacity(0.4), radius: 10, y: 2)
+
+                    Image(systemName: "hexagon.fill")
+                        .font(.system(size: 24, weight: .semibold))
+                        .foregroundStyle(.white)
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 6) {
+                        Text("Gridlock")
+                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+
+                        Text("NEW")
+                            .font(.system(size: 9, weight: .heavy, design: .monospaced))
+                            .foregroundStyle(.black)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(
+                                Capsule()
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [.cyan, .green],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                            )
+                    }
+
+                    Text("1v1 Strategy  •  Build & Automate")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.5))
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(.white.opacity(0.3))
+                    .font(.system(size: 14, weight: .semibold))
+            }
+
+            // Feature tags
+            HStack(spacing: 8) {
+                featureTag(icon: "hexagon", text: "Hex Grid")
+                featureTag(icon: "bolt.fill", text: "AP System")
+                featureTag(icon: "point.3.connected.trianglepath.dotted", text: "Automations")
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.08, green: 0.08, blue: 0.2),
+                            Color(red: 0.15, green: 0.06, blue: 0.25),
+                            Color(red: 0.08, green: 0.08, blue: 0.18)
+                        ],
+                        startPoint: gradientPhase ? .topLeading : .bottomTrailing,
+                        endPoint: gradientPhase ? .bottomTrailing : .topLeading
+                    )
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(
+                    LinearGradient(
+                        colors: [Color.cyan.opacity(0.3), Color.purple.opacity(0.3)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
+        )
+        .onAppear {
+            withAnimation(.easeInOut(duration: 4).repeatForever(autoreverses: true)) {
+                gradientPhase = true
+            }
+        }
+    }
+
+    private func featureTag(icon: String, text: String) -> some View {
+        HStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.system(size: 9))
+            Text(text)
+                .font(.system(size: 10, weight: .medium, design: .monospaced))
+        }
+        .foregroundStyle(.cyan.opacity(0.7))
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(
+            Capsule()
+                .fill(Color.cyan.opacity(0.08))
+                .overlay(Capsule().stroke(Color.cyan.opacity(0.15), lineWidth: 0.5))
+        )
     }
 }
 

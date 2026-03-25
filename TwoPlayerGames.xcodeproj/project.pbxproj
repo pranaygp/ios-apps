@@ -50,6 +50,11 @@
 		A10000170 /* PlayerSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000170; };
 		A10000180 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000180; };
 		A10000190 /* AnimationModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000190; };
+		A10000200 /* GridlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000200; };
+		A10000201 /* GridlockModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000201; };
+		A10000202 /* HexGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000202; };
+		A10000203 /* AutomationEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000203; };
+		A10000204 /* GridlockGameEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000204; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -98,6 +103,11 @@
 		A20000170 /* PlayerSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSetupView.swift; sourceTree = "<group>"; };
 		A20000180 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		A20000190 /* AnimationModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationModifiers.swift; sourceTree = "<group>"; };
+		A20000200 /* GridlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridlockView.swift; sourceTree = "<group>"; };
+		A20000201 /* GridlockModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridlockModels.swift; sourceTree = "<group>"; };
+		A20000202 /* HexGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexGridView.swift; sourceTree = "<group>"; };
+		A20000203 /* AutomationEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEditorView.swift; sourceTree = "<group>"; };
+		A20000204 /* GridlockGameEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridlockGameEngine.swift; sourceTree = "<group>"; };
 		A30000001 /* TwoPlayerGames.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwoPlayerGames.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -153,6 +163,7 @@
 		A50000004 /* Games */ = {
 			isa = PBXGroup;
 			children = (
+				A50000029 /* Gridlock */,
 				A50000005 /* PingPong */,
 				A50000006 /* AirHockey */,
 				A50000007 /* TicTacToe */,
@@ -343,6 +354,18 @@
 			path = Reversi;
 			sourceTree = "<group>";
 		};
+		A50000029 /* Gridlock */ = {
+			isa = PBXGroup;
+			children = (
+				A20000200 /* GridlockView.swift */,
+				A20000201 /* GridlockModels.swift */,
+				A20000202 /* HexGridView.swift */,
+				A20000203 /* AutomationEditorView.swift */,
+				A20000204 /* GridlockGameEngine.swift */,
+			);
+			path = Gridlock;
+			sourceTree = "<group>";
+		};
 		A50000008 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -491,6 +514,11 @@
 				A10000170 /* PlayerSetupView.swift in Sources */,
 				A10000180 /* StatsView.swift in Sources */,
 				A10000190 /* AnimationModifiers.swift in Sources */,
+				A10000200 /* GridlockView.swift in Sources */,
+				A10000201 /* GridlockModels.swift in Sources */,
+				A10000202 /* HexGridView.swift in Sources */,
+				A10000203 /* AutomationEditorView.swift in Sources */,
+				A10000204 /* GridlockGameEngine.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -622,7 +650,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -660,7 +688,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

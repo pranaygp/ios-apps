@@ -232,6 +232,19 @@ extension TutorialContent {
         controls: "Tap an empty square with a valid move indicator to place your disc"
     )
 
+    static let gridlock = TutorialContent(
+        title: "Gridlock",
+        emoji: "⬡",
+        rules: [
+            "Build economy: place Extractors on resources, Relays to expand, Factories to produce units",
+            "Spend Action Points (AP) to build and deploy — AP regenerates each tick",
+            "Deploy Scouts, Soldiers, and Tanks to attack the enemy",
+            "Set up Automations to run strategies automatically each tick",
+            "Destroy your opponent's HQ or have more resources when time runs out"
+        ],
+        controls: "Pinch to zoom, drag to pan. Tap hexes to build/deploy. Tap units to assign targets."
+    )
+
     static let battleship = TutorialContent(
         title: "Battleship",
         emoji: "\u{1F6A2}",
