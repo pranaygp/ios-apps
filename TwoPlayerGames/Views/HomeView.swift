@@ -1,5 +1,22 @@
 import SwiftUI
 
+enum GameCategory: String, CaseIterable {
+    case action, strategy, party, cardClassic
+
+    var title: String {
+        switch self {
+        case .action: return "🎯 Action"
+        case .strategy: return "🧠 Strategy"
+        case .party: return "🎲 Party"
+        case .cardClassic: return "🃏 Card & Classic"
+        }
+    }
+
+    var storageKey: String {
+        "collapsed_\(rawValue)"
+    }
+}
+
 struct GameCard: Identifiable {
     let id = UUID()
     let title: String
@@ -7,6 +24,7 @@ struct GameCard: Identifiable {
     let icon: String
     let gradient: [Color]
     let gameType: HomeView.GameType
+    let category: GameCategory
 }
 
 struct HomeView: View {
@@ -22,6 +40,33 @@ struct HomeView: View {
     @State private var animateCards = false
     @State private var shimmerOffset: CGFloat = -200
     @State private var floatingPhase = false
+    @State private var randomButtonRotation: Double = 0
+    @AppStorage("collapsed_action") private var actionCollapsed = false
+    @AppStorage("collapsed_strategy") private var strategyCollapsed = false
+    @AppStorage("collapsed_party") private var partyCollapsed = false
+    @AppStorage("collapsed_cardClassic") private var cardClassicCollapsed = false
+
+    private func isCollapsed(_ category: GameCategory) -> Bool {
+        switch category {
+        case .action: return actionCollapsed
+        case .strategy: return strategyCollapsed
+        case .party: return partyCollapsed
+        case .cardClassic: return cardClassicCollapsed
+        }
+    }
+
+    private func toggleCollapsed(_ category: GameCategory) {
+        switch category {
+        case .action: actionCollapsed.toggle()
+        case .strategy: strategyCollapsed.toggle()
+        case .party: partyCollapsed.toggle()
+        case .cardClassic: cardClassicCollapsed.toggle()
+        }
+    }
+
+    private func gamesFor(_ category: GameCategory) -> [GameCard] {
+        games.filter { $0.category == category }
+    }
 
     enum GameType: Identifiable {
         case pingPong, airHockey, ticTacToe, connectFour, reactionTime, simonSays
@@ -30,146 +75,70 @@ struct HomeView: View {
     }
 
     private let games = [
-        GameCard(
-            title: "Ping Pong",
-            subtitle: "Classic paddle battle",
-            icon: "sportscourt",
-            gradient: [Color(red: 0.25, green: 0.55, blue: 1.0), Color(red: 0.1, green: 0.3, blue: 0.85)],
-            gameType: .pingPong
-        ),
-        GameCard(
-            title: "Air Hockey",
-            subtitle: "Flick and score",
-            icon: "circle.circle",
-            gradient: [Color(red: 1.0, green: 0.35, blue: 0.35), Color(red: 0.8, green: 0.12, blue: 0.2)],
-            gameType: .airHockey
-        ),
-        GameCard(
-            title: "Tic Tac Toe",
-            subtitle: "Classic strategy",
-            icon: "number",
-            gradient: [Color(red: 0.3, green: 0.82, blue: 0.45), Color(red: 0.12, green: 0.62, blue: 0.3)],
-            gameType: .ticTacToe
-        ),
-        GameCard(
-            title: "Connect Four",
-            subtitle: "Drop to connect",
-            icon: "circle.grid.3x3.fill",
-            gradient: [Color(red: 1.0, green: 0.7, blue: 0.15), Color(red: 0.9, green: 0.5, blue: 0.05)],
-            gameType: .connectFour
-        ),
-        GameCard(
-            title: "Reaction Time",
-            subtitle: "Test your reflexes",
-            icon: "bolt.fill",
-            gradient: [Color(red: 0.8, green: 0.3, blue: 1.0), Color(red: 0.55, green: 0.1, blue: 0.85)],
-            gameType: .reactionTime
-        ),
-        GameCard(
-            title: "Simon Says",
-            subtitle: "Memory pattern challenge",
-            icon: "brain.head.profile",
-            gradient: [Color(red: 1.0, green: 0.45, blue: 0.55), Color(red: 0.85, green: 0.2, blue: 0.4)],
-            gameType: .simonSays
-        ),
-        GameCard(
-            title: "Tug of War",
-            subtitle: "Tap fast to pull the rope",
-            icon: "figure.strengthtraining.traditional",
-            gradient: [Color(red: 0.95, green: 0.55, blue: 0.1), Color(red: 0.8, green: 0.35, blue: 0.0)],
-            gameType: .tugOfWar
-        ),
-        GameCard(
-            title: "Memory Match",
-            subtitle: "Flip and find pairs",
-            icon: "rectangle.on.rectangle",
-            gradient: [Color(red: 0.2, green: 0.75, blue: 0.85), Color(red: 0.05, green: 0.5, blue: 0.65)],
-            gameType: .memoryMatch
-        ),
-        GameCard(
-            title: "Color Conquest",
-            subtitle: "Claim territory before time runs out",
-            icon: "square.grid.3x3.topleft.filled",
-            gradient: [Color(red: 0.65, green: 0.2, blue: 0.9), Color(red: 0.4, green: 0.05, blue: 0.7)],
-            gameType: .colorConquest
-        ),
-        GameCard(
-            title: "Sonar Duel",
-            subtitle: "LAN submarine battle",
-            icon: "antenna.radiowaves.left.and.right",
-            gradient: [Color(red: 0.15, green: 0.7, blue: 0.7), Color(red: 0.04, green: 0.15, blue: 0.35)],
-            gameType: .sonarDuel
-        ),
-        GameCard(
-            title: "Dots & Boxes",
-            subtitle: "Classic pencil-and-paper strategy",
-            icon: "square.grid.3x3",
-            gradient: [Color(red: 0.3, green: 0.6, blue: 0.95), Color(red: 0.15, green: 0.35, blue: 0.8)],
-            gameType: .dotsAndBoxes
-        ),
-        GameCard(
-            title: "Snake vs Snake",
-            subtitle: "Classic arcade duel",
-            icon: "arrow.trianglehead.swap",
-            gradient: [Color(red: 0.1, green: 0.8, blue: 0.4), Color(red: 0.05, green: 0.55, blue: 0.25)],
-            gameType: .snakeVsSnake
-        ),
-        GameCard(
-            title: "War",
-            subtitle: "Classic card battle",
-            icon: "suit.spade.fill",
-            gradient: [Color(red: 0.85, green: 0.65, blue: 0.2), Color(red: 0.7, green: 0.4, blue: 0.1)],
-            gameType: .war
-        ),
-        GameCard(
-            title: "Battleship",
-            subtitle: "Naval strategy showdown",
-            icon: "shield.checkered",
-            gradient: [Color(red: 0.1, green: 0.45, blue: 0.65), Color(red: 0.05, green: 0.25, blue: 0.45)],
-            gameType: .battleship
-        ),
-        GameCard(
-            title: "Word Chain",
-            subtitle: "Fast-paced vocabulary duel",
-            icon: "textformat.abc",
-            gradient: [Color(red: 0.85, green: 0.65, blue: 0.3), Color(red: 0.7, green: 0.45, blue: 0.15)],
-            gameType: .wordChain
-        ),
-        GameCard(
-            title: "Maze Race",
-            subtitle: "Navigate the labyrinth",
-            icon: "square.grid.3x3.middleright.filled",
-            gradient: [Color(red: 0.1, green: 0.75, blue: 0.65), Color(red: 0.05, green: 0.5, blue: 0.45)],
-            gameType: .mazeRace
-        ),
-        GameCard(
-            title: "Rhythm Tap",
-            subtitle: "Tap to the beat",
-            icon: "music.note.list",
-            gradient: [Color(red: 0.9, green: 0.2, blue: 0.6), Color(red: 0.6, green: 0.1, blue: 0.5)],
-            gameType: .rhythmTap
-        ),
-        GameCard(
-            title: "Duel Draw",
-            subtitle: "Draw and guess together",
-            icon: "paintbrush.pointed.fill",
-            gradient: [Color(red: 0.95, green: 0.4, blue: 0.2), Color(red: 0.85, green: 0.2, blue: 0.4)],
-            gameType: .duelDraw
-        ),
-        GameCard(
-            title: "Checkers",
-            subtitle: "Classic board strategy",
-            icon: "checkerboard.rectangle",
-            gradient: [Color(red: 0.65, green: 0.35, blue: 0.15), Color(red: 0.45, green: 0.22, blue: 0.08)],
-            gameType: .checkers
-        ),
-        GameCard(
-            title: "Reversi",
-            subtitle: "Disc-flipping strategy",
-            icon: "circle.bottomhalf.filled",
-            gradient: [Color(red: 0.1, green: 0.5, blue: 0.2), Color(red: 0.05, green: 0.3, blue: 0.1)],
-            gameType: .reversi
-        ),
+        // Action
+        GameCard(title: "Ping Pong", subtitle: "Classic paddle battle", icon: "sportscourt",
+                 gradient: [Color(red: 0.25, green: 0.55, blue: 1.0), Color(red: 0.1, green: 0.3, blue: 0.85)],
+                 gameType: .pingPong, category: .action),
+        GameCard(title: "Air Hockey", subtitle: "Flick and score", icon: "circle.circle",
+                 gradient: [Color(red: 1.0, green: 0.35, blue: 0.35), Color(red: 0.8, green: 0.12, blue: 0.2)],
+                 gameType: .airHockey, category: .action),
+        GameCard(title: "Tug of War", subtitle: "Tap fast to pull the rope", icon: "figure.strengthtraining.traditional",
+                 gradient: [Color(red: 0.95, green: 0.55, blue: 0.1), Color(red: 0.8, green: 0.35, blue: 0.0)],
+                 gameType: .tugOfWar, category: .action),
+        GameCard(title: "Snake vs Snake", subtitle: "Classic arcade duel", icon: "arrow.trianglehead.swap",
+                 gradient: [Color(red: 0.1, green: 0.8, blue: 0.4), Color(red: 0.05, green: 0.55, blue: 0.25)],
+                 gameType: .snakeVsSnake, category: .action),
+        GameCard(title: "Reaction Time", subtitle: "Test your reflexes", icon: "bolt.fill",
+                 gradient: [Color(red: 0.8, green: 0.3, blue: 1.0), Color(red: 0.55, green: 0.1, blue: 0.85)],
+                 gameType: .reactionTime, category: .action),
+        GameCard(title: "Rhythm Tap", subtitle: "Tap to the beat", icon: "music.note.list",
+                 gradient: [Color(red: 0.9, green: 0.2, blue: 0.6), Color(red: 0.6, green: 0.1, blue: 0.5)],
+                 gameType: .rhythmTap, category: .action),
+        // Strategy
+        GameCard(title: "Tic Tac Toe", subtitle: "Classic strategy", icon: "number",
+                 gradient: [Color(red: 0.3, green: 0.82, blue: 0.45), Color(red: 0.12, green: 0.62, blue: 0.3)],
+                 gameType: .ticTacToe, category: .strategy),
+        GameCard(title: "Connect Four", subtitle: "Drop to connect", icon: "circle.grid.3x3.fill",
+                 gradient: [Color(red: 1.0, green: 0.7, blue: 0.15), Color(red: 0.9, green: 0.5, blue: 0.05)],
+                 gameType: .connectFour, category: .strategy),
+        GameCard(title: "Dots & Boxes", subtitle: "Classic pencil-and-paper strategy", icon: "square.grid.3x3",
+                 gradient: [Color(red: 0.3, green: 0.6, blue: 0.95), Color(red: 0.15, green: 0.35, blue: 0.8)],
+                 gameType: .dotsAndBoxes, category: .strategy),
+        GameCard(title: "Checkers", subtitle: "Classic board strategy", icon: "checkerboard.rectangle",
+                 gradient: [Color(red: 0.65, green: 0.35, blue: 0.15), Color(red: 0.45, green: 0.22, blue: 0.08)],
+                 gameType: .checkers, category: .strategy),
+        GameCard(title: "Reversi", subtitle: "Disc-flipping strategy", icon: "circle.bottomhalf.filled",
+                 gradient: [Color(red: 0.1, green: 0.5, blue: 0.2), Color(red: 0.05, green: 0.3, blue: 0.1)],
+                 gameType: .reversi, category: .strategy),
+        GameCard(title: "Battleship", subtitle: "Naval strategy showdown", icon: "shield.checkered",
+                 gradient: [Color(red: 0.1, green: 0.45, blue: 0.65), Color(red: 0.05, green: 0.25, blue: 0.45)],
+                 gameType: .battleship, category: .strategy),
+        // Party
+        GameCard(title: "Simon Says", subtitle: "Memory pattern challenge", icon: "brain.head.profile",
+                 gradient: [Color(red: 1.0, green: 0.45, blue: 0.55), Color(red: 0.85, green: 0.2, blue: 0.4)],
+                 gameType: .simonSays, category: .party),
+        GameCard(title: "Memory Match", subtitle: "Flip and find pairs", icon: "rectangle.on.rectangle",
+                 gradient: [Color(red: 0.2, green: 0.75, blue: 0.85), Color(red: 0.05, green: 0.5, blue: 0.65)],
+                 gameType: .memoryMatch, category: .party),
+        GameCard(title: "Color Conquest", subtitle: "Claim territory before time runs out", icon: "square.grid.3x3.topleft.filled",
+                 gradient: [Color(red: 0.65, green: 0.2, blue: 0.9), Color(red: 0.4, green: 0.05, blue: 0.7)],
+                 gameType: .colorConquest, category: .party),
+        GameCard(title: "Duel Draw", subtitle: "Draw and guess together", icon: "paintbrush.pointed.fill",
+                 gradient: [Color(red: 0.95, green: 0.4, blue: 0.2), Color(red: 0.85, green: 0.2, blue: 0.4)],
+                 gameType: .duelDraw, category: .party),
+        GameCard(title: "Word Chain", subtitle: "Fast-paced vocabulary duel", icon: "textformat.abc",
+                 gradient: [Color(red: 0.85, green: 0.65, blue: 0.3), Color(red: 0.7, green: 0.45, blue: 0.15)],
+                 gameType: .wordChain, category: .party),
+        GameCard(title: "Maze Race", subtitle: "Navigate the labyrinth", icon: "square.grid.3x3.middleright.filled",
+                 gradient: [Color(red: 0.1, green: 0.75, blue: 0.65), Color(red: 0.05, green: 0.5, blue: 0.45)],
+                 gameType: .mazeRace, category: .party),
+        // Card & Classic
+        GameCard(title: "War", subtitle: "Classic card battle", icon: "suit.spade.fill",
+                 gradient: [Color(red: 0.85, green: 0.65, blue: 0.2), Color(red: 0.7, green: 0.4, blue: 0.1)],
+                 gameType: .war, category: .cardClassic),
+        GameCard(title: "Sonar Duel", subtitle: "LAN submarine battle", icon: "antenna.radiowaves.left.and.right",
+                 gradient: [Color(red: 0.15, green: 0.7, blue: 0.7), Color(red: 0.04, green: 0.15, blue: 0.35)],
+                 gameType: .sonarDuel, category: .cardClassic),
     ]
 
     var body: some View {
@@ -190,22 +159,58 @@ struct HomeView: View {
                             .transition(.opacity.combined(with: .move(edge: .top)))
                     }
 
-                    // Game cards
-                    VStack(spacing: 14) {
-                        ForEach(Array(games.enumerated()), id: \.element.id) { index, game in
-                            Button {
-                                HapticManager.impact(.light)
-                                SoundManager.playButtonTap()
-                                selectedGame = game.gameType
-                            } label: {
-                                GameCardView(game: game)
+                    // Random Game button
+                    randomGameButton
+                        .padding(.horizontal, 20)
+
+                    // Game categories
+                    VStack(spacing: 24) {
+                        ForEach(GameCategory.allCases, id: \.self) { category in
+                            let categoryGames = gamesFor(category)
+                            VStack(spacing: 10) {
+                                // Section header
+                                Button {
+                                    HapticManager.impact(.light)
+                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                        toggleCollapsed(category)
+                                    }
+                                } label: {
+                                    HStack {
+                                        Text(category.title)
+                                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                                            .foregroundStyle(.white)
+                                        Text("\(categoryGames.count) games")
+                                            .font(.system(size: 13, weight: .medium))
+                                            .foregroundStyle(.white.opacity(0.35))
+                                        Spacer()
+                                        Image(systemName: "chevron.right")
+                                            .font(.system(size: 13, weight: .semibold))
+                                            .foregroundStyle(.white.opacity(0.3))
+                                            .rotationEffect(.degrees(isCollapsed(category) ? 0 : 90))
+                                    }
+                                    .padding(.horizontal, 4)
+                                }
+                                .buttonStyle(.plain)
+
+                                if !isCollapsed(category) {
+                                    ForEach(Array(categoryGames.enumerated()), id: \.element.id) { index, game in
+                                        Button {
+                                            HapticManager.impact(.light)
+                                            SoundManager.playButtonTap()
+                                            selectedGame = game.gameType
+                                        } label: {
+                                            GameCardView(game: game)
+                                        }
+                                        .accessibilityLabel("\(game.title): \(game.subtitle)")
+                                        .buttonStyle(GameCardButtonStyle())
+                                        .opacity(animateCards ? 1 : 0)
+                                        .offset(y: animateCards ? (floatingPhase ? -1.5 : 1.5) : 20)
+                                        .animation(.easeOut(duration: 0.4).delay(Double(index) * 0.06), value: animateCards)
+                                        .animation(.easeInOut(duration: 2.5 + Double(index) * 0.2).repeatForever(autoreverses: true), value: floatingPhase)
+                                        .transition(.opacity.combined(with: .move(edge: .top)))
+                                    }
+                                }
                             }
-                            .accessibilityLabel("\(game.title): \(game.subtitle)")
-                            .buttonStyle(GameCardButtonStyle())
-                            .opacity(animateCards ? 1 : 0)
-                            .offset(y: animateCards ? (floatingPhase ? -1.5 : 1.5) : 20)
-                            .animation(.easeOut(duration: 0.4).delay(Double(index) * 0.08), value: animateCards)
-                            .animation(.easeInOut(duration: 2.5 + Double(index) * 0.2).repeatForever(autoreverses: true), value: floatingPhase)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -244,6 +249,73 @@ struct HomeView: View {
                 .environmentObject(statsManager)
                 .environmentObject(profileManager)
         }
+    }
+
+    // MARK: - Random Game Button
+
+    private var randomGameButton: some View {
+        Button {
+            HapticManager.impact(.medium)
+            SoundManager.playButtonTap()
+            withAnimation(.easeInOut(duration: 0.4)) {
+                randomButtonRotation += 360
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                if let randomGame = games.randomElement() {
+                    selectedGame = randomGame.gameType
+                }
+            }
+        } label: {
+            HStack(spacing: 14) {
+                Text("🎲")
+                    .font(.system(size: 28))
+                    .rotationEffect(.degrees(randomButtonRotation))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Random Game")
+                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                    Text("Feeling lucky? Pick a random game!")
+                        .font(.system(size: 13))
+                        .foregroundStyle(.white.opacity(0.5))
+                }
+
+                Spacer()
+
+                Image(systemName: "shuffle")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.4))
+            }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 18)
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.purple.opacity(0.3), Color.blue.opacity(0.3)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+            )
+            .background(
+                RoundedRectangle(cornerRadius: 18)
+                    .fill(.ultraThinMaterial)
+                    .environment(\.colorScheme, .dark)
+                    .opacity(0.4)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 18)
+                    .stroke(
+                        LinearGradient(
+                            colors: [Color.purple.opacity(0.3), Color.blue.opacity(0.3)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
+        }
+        .buttonStyle(GameCardButtonStyle())
     }
 
     // MARK: - Session Score Card
