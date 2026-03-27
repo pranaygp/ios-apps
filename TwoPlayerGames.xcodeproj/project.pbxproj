@@ -50,6 +50,7 @@
 		A10000170 /* PlayerSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000170; };
 		A10000180 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000180; };
 		A10000190 /* AnimationModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000190; };
+		A10000210 /* MancalaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000210; };
 		A10000200 /* GridlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000200; };
 		A10000201 /* GridlockModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000201; };
 		A10000202 /* HexGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000202; };
@@ -103,6 +104,7 @@
 		A20000170 /* PlayerSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSetupView.swift; sourceTree = "<group>"; };
 		A20000180 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		A20000190 /* AnimationModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationModifiers.swift; sourceTree = "<group>"; };
+		A20000210 /* MancalaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MancalaView.swift; sourceTree = "<group>"; };
 		A20000200 /* GridlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridlockView.swift; sourceTree = "<group>"; };
 		A20000201 /* GridlockModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridlockModels.swift; sourceTree = "<group>"; };
 		A20000202 /* HexGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexGridView.swift; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 		A50000004 /* Games */ = {
 			isa = PBXGroup;
 			children = (
+				A50000030 /* Mancala */,
 				A50000029 /* Gridlock */,
 				A50000005 /* PingPong */,
 				A50000006 /* AirHockey */,
@@ -354,6 +357,14 @@
 			path = Reversi;
 			sourceTree = "<group>";
 		};
+		A50000030 /* Mancala */ = {
+			isa = PBXGroup;
+			children = (
+				A20000210 /* MancalaView.swift */,
+			);
+			path = Mancala;
+			sourceTree = "<group>";
+		};
 		A50000029 /* Gridlock */ = {
 			isa = PBXGroup;
 			children = (
@@ -514,6 +525,7 @@
 				A10000170 /* PlayerSetupView.swift in Sources */,
 				A10000180 /* StatsView.swift in Sources */,
 				A10000190 /* AnimationModifiers.swift in Sources */,
+				A10000210 /* MancalaView.swift in Sources */,
 				A10000200 /* GridlockView.swift in Sources */,
 				A10000201 /* GridlockModels.swift in Sources */,
 				A10000202 /* HexGridView.swift in Sources */,
@@ -650,7 +662,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 29;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -688,7 +700,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 29;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

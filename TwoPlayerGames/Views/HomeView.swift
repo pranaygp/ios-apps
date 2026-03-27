@@ -71,7 +71,7 @@ struct HomeView: View {
     enum GameType: Identifiable {
         case gridlock
         case pingPong, airHockey, ticTacToe, connectFour, reactionTime, simonSays
-        case tugOfWar, memoryMatch, colorConquest, sonarDuel, dotsAndBoxes, snakeVsSnake, war, battleship, wordChain, mazeRace, rhythmTap, duelDraw, checkers, reversi
+        case tugOfWar, memoryMatch, colorConquest, sonarDuel, dotsAndBoxes, snakeVsSnake, war, battleship, wordChain, mazeRace, rhythmTap, duelDraw, checkers, reversi, mancala
         var id: Self { self }
     }
 
@@ -115,6 +115,9 @@ struct HomeView: View {
         GameCard(title: "Reversi", subtitle: "Disc-flipping strategy", icon: "circle.bottomhalf.filled",
                  gradient: [Color(red: 0.1, green: 0.5, blue: 0.2), Color(red: 0.05, green: 0.3, blue: 0.1)],
                  gameType: .reversi, category: .strategy),
+        GameCard(title: "Mancala", subtitle: "Ancient stone-sowing strategy", icon: "oval.fill",
+                 gradient: [Color(red: 0.55, green: 0.35, blue: 0.18), Color(red: 0.4, green: 0.22, blue: 0.1)],
+                 gameType: .mancala, category: .strategy),
         GameCard(title: "Battleship", subtitle: "Naval strategy showdown", icon: "shield.checkered",
                  gradient: [Color(red: 0.1, green: 0.45, blue: 0.65), Color(red: 0.05, green: 0.25, blue: 0.45)],
                  gameType: .battleship, category: .strategy),
@@ -623,6 +626,8 @@ struct HomeView: View {
             CheckersView()
         case .reversi:
             ReversiView()
+        case .mancala:
+            MancalaView()
         }
     }
 }

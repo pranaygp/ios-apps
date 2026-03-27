@@ -245,6 +245,19 @@ extension TutorialContent {
         controls: "Pinch to zoom, drag to pan. Tap hexes to build/deploy. Tap units to assign targets."
     )
 
+    static let mancala = TutorialContent(
+        title: "Mancala",
+        emoji: "\u{1F3B2}",
+        rules: [
+            "Pick up all stones from one of your pits and sow counter-clockwise",
+            "If your last stone lands in your store, take another turn",
+            "If your last stone lands in an empty pit on your side, capture it and the opposite stones",
+            "Game ends when one side is empty — remaining stones go to that player's store",
+            "Most stones in your store wins!"
+        ],
+        controls: "Tap a pit on your side to pick up and distribute stones"
+    )
+
     static let battleship = TutorialContent(
         title: "Battleship",
         emoji: "\u{1F6A2}",
