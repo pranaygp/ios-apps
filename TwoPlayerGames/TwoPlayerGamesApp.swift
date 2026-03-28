@@ -8,6 +8,7 @@ struct TwoPlayerGamesApp: App {
     @StateObject private var sessionTracker = SessionTracker.shared
     @StateObject private var profileManager = PlayerProfileManager.shared
     @StateObject private var statsManager = GameStatsManager.shared
+    @StateObject private var themeManager = ThemeManager.shared
 
     var body: some Scene {
         WindowGroup {
@@ -18,12 +19,19 @@ struct TwoPlayerGamesApp: App {
                     .environmentObject(sessionTracker)
                     .environmentObject(profileManager)
                     .environmentObject(statsManager)
+                    .environmentObject(themeManager)
 
                 if showSplash {
                     SplashScreen()
                         .transition(.opacity)
                         .zIndex(1)
                 }
+
+                ThemeUnlockToast(
+                    themeName: themeManager.unlockedThemeName,
+                    isVisible: themeManager.showUnlockToast
+                )
+                .zIndex(2)
             }
             .animation(.easeOut(duration: 0.5), value: showSplash)
             .onAppear {

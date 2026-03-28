@@ -32,8 +32,10 @@ struct HomeView: View {
     @EnvironmentObject var sessionTracker: SessionTracker
     @EnvironmentObject var profileManager: PlayerProfileManager
     @EnvironmentObject var statsManager: GameStatsManager
+    @EnvironmentObject var themeManager: ThemeManager
     @State private var selectedGame: GameType?
     @State private var showSettings = false
+    @State private var showThemePicker = false
     @State private var showSessionDetail = false
     @State private var showPlayerSetup = false
     @State private var showStats = false
@@ -197,10 +199,10 @@ struct HomeView: View {
                                     HStack {
                                         Text(category.title)
                                             .font(.system(size: 20, weight: .bold, design: .rounded))
-                                            .foregroundStyle(.white)
+                                            .foregroundStyle(themeManager.currentTheme.textColor)
                                         Text("\(categoryGames.count) games")
                                             .font(.system(size: 13, weight: .medium))
-                                            .foregroundStyle(.white.opacity(0.35))
+                                            .foregroundStyle(themeManager.currentTheme.textColor.opacity(0.35))
                                         Spacer()
                                         Image(systemName: "chevron.right")
                                             .font(.system(size: 13, weight: .semibold))
@@ -263,6 +265,11 @@ struct HomeView: View {
             PlayerSetupView()
                 .environmentObject(profileManager)
         }
+        .sheet(isPresented: $showThemePicker) {
+            ThemePickerView()
+                .environmentObject(themeManager)
+                .environmentObject(statsManager)
+        }
         .sheet(isPresented: $showStats) {
             StatsView()
                 .environmentObject(statsManager)
@@ -293,24 +300,24 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Random Game")
                         .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(themeManager.currentTheme.textColor)
                     Text("Feeling lucky? Pick a random game!")
                         .font(.system(size: 13))
-                        .foregroundStyle(.white.opacity(0.5))
+                        .foregroundStyle(themeManager.currentTheme.textColor.opacity(0.5))
                 }
 
                 Spacer()
 
                 Image(systemName: "shuffle")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.4))
+                    .foregroundStyle(themeManager.currentTheme.textColor.opacity(0.4))
             }
             .padding(14)
             .background(
                 RoundedRectangle(cornerRadius: 18)
                     .fill(
                         LinearGradient(
-                            colors: [Color.purple.opacity(0.3), Color.blue.opacity(0.3)],
+                            colors: [themeManager.currentTheme.secondaryColor.opacity(0.3), themeManager.currentTheme.primaryColor.opacity(0.3)],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
@@ -326,7 +333,7 @@ struct HomeView: View {
                 RoundedRectangle(cornerRadius: 18)
                     .stroke(
                         LinearGradient(
-                            colors: [Color.purple.opacity(0.3), Color.blue.opacity(0.3)],
+                            colors: [themeManager.currentTheme.secondaryColor.opacity(0.3), themeManager.currentTheme.primaryColor.opacity(0.3)],
                             startPoint: .leading,
                             endPoint: .trailing
                         ),
@@ -424,12 +431,12 @@ struct HomeView: View {
 
     private var backgroundView: some View {
         ZStack {
-            Color(white: 0.06).ignoresSafeArea()
+            themeManager.currentTheme.backgroundColor.ignoresSafeArea()
 
             Circle()
                 .fill(
                     RadialGradient(
-                        colors: [Color.blue.opacity(0.12), Color.clear],
+                        colors: [themeManager.currentTheme.primaryColor.opacity(0.12), Color.clear],
                         center: .center,
                         startRadius: 0,
                         endRadius: 200
@@ -442,7 +449,7 @@ struct HomeView: View {
             Circle()
                 .fill(
                     RadialGradient(
-                        colors: [Color.purple.opacity(0.08), Color.clear],
+                        colors: [themeManager.currentTheme.secondaryColor.opacity(0.08), Color.clear],
                         center: .center,
                         startRadius: 0,
                         endRadius: 200
@@ -549,6 +556,26 @@ struct HomeView: View {
                         }
                         .accessibilityLabel("Game Center")
                     }
+
+                    Button {
+                        HapticManager.impact(.light)
+                        showThemePicker = true
+                    } label: {
+                        Image(systemName: "paintpalette.fill")
+                            .font(.system(size: 18))
+                            .foregroundStyle(themeManager.currentTheme.accentColor.opacity(0.7))
+                            .frame(width: 44, height: 44)
+                            .background(
+                                Circle()
+                                    .fill(.ultraThinMaterial)
+                                    .environment(\.colorScheme, .dark)
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(themeManager.currentTheme.accentColor.opacity(0.12), lineWidth: 1)
+                            )
+                    }
+                    .accessibilityLabel("Themes")
 
                     Button {
                         HapticManager.impact(.light)
@@ -746,6 +773,7 @@ struct GameCardButtonStyle: ButtonStyle {
 
 struct GameCardView: View {
     let game: GameCard
+    @EnvironmentObject var themeManager: ThemeManager
 
     var body: some View {
         HStack(spacing: 16) {
@@ -770,17 +798,17 @@ struct GameCardView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(game.title)
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(themeManager.currentTheme.textColor)
 
                 Text(game.subtitle)
                     .font(.system(size: 13))
-                    .foregroundStyle(.white.opacity(0.4))
+                    .foregroundStyle(themeManager.currentTheme.textColor.opacity(0.4))
             }
 
             Spacer()
 
             Image(systemName: "chevron.right")
-                .foregroundStyle(.white.opacity(0.25))
+                .foregroundStyle(themeManager.currentTheme.textColor.opacity(0.25))
                 .font(.system(size: 13, weight: .semibold))
         }
         .padding(14)
@@ -792,7 +820,7 @@ struct GameCardView: View {
         )
         .background(
             RoundedRectangle(cornerRadius: 18)
-                .fill(Color.white.opacity(0.03))
+                .fill(themeManager.currentTheme.cardBackground)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 18)
@@ -928,4 +956,5 @@ struct FeaturedGridlockCard: View {
         .environmentObject(SessionTracker.shared)
         .environmentObject(PlayerProfileManager.shared)
         .environmentObject(GameStatsManager.shared)
+        .environmentObject(ThemeManager.shared)
 }

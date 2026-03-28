@@ -550,6 +550,7 @@ struct WinnerOverlay: View {
             if let gameName {
                 SessionTracker.shared.recordWin(player: winner, gameType: gameName)
                 GameStatsManager.shared.recordWin(player: winner, game: gameName)
+                ThemeManager.shared.checkForUnlocks()
             }
         }
     }
@@ -645,6 +646,7 @@ struct DrawOverlay: View {
             }
             if let gameName {
                 GameStatsManager.shared.recordDraw(game: gameName)
+                ThemeManager.shared.checkForUnlocks()
             }
         }
     }

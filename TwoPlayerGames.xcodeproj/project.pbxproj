@@ -56,6 +56,8 @@
 		A10000202 /* HexGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000202; };
 		A10000203 /* AutomationEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000203; };
 		A10000204 /* GridlockGameEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000204; };
+		A10000220 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000220; };
+		A10000221 /* ThemePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000221; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -110,6 +112,8 @@
 		A20000202 /* HexGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexGridView.swift; sourceTree = "<group>"; };
 		A20000203 /* AutomationEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEditorView.swift; sourceTree = "<group>"; };
 		A20000204 /* GridlockGameEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridlockGameEngine.swift; sourceTree = "<group>"; };
+		A20000220 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		A20000221 /* ThemePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemePickerView.swift; sourceTree = "<group>"; };
 		A30000001 /* TwoPlayerGames.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwoPlayerGames.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -158,6 +162,7 @@
 				A20000170 /* PlayerSetupView.swift */,
 				A20000180 /* StatsView.swift */,
 				A20000190 /* AnimationModifiers.swift */,
+				A20000221 /* ThemePickerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -385,6 +390,7 @@
 				A20000013 /* GameSettings.swift */,
 				A20000018 /* GameCenterManager.swift */,
 				A20000020 /* SessionTracker.swift */,
+				A20000220 /* ThemeManager.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -531,6 +537,8 @@
 				A10000202 /* HexGridView.swift in Sources */,
 				A10000203 /* AutomationEditorView.swift in Sources */,
 				A10000204 /* GridlockGameEngine.swift in Sources */,
+				A10000220 /* ThemeManager.swift in Sources */,
+				A10000221 /* ThemePickerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -662,7 +670,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -700,7 +708,7 @@
 				CODE_SIGN_ENTITLEMENTS = TwoPlayerGames/TwoPlayerGames.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5ZCBUNYZ8;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_ASSET_PATHS = "\"TwoPlayerGames/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
