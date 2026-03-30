@@ -9,6 +9,17 @@ struct SettingsView: View {
             List {
                 Section {
                     Toggle("Sound Effects", isOn: $settings.soundEnabled)
+                    if settings.soundEnabled {
+                        HStack {
+                            Image(systemName: "speaker.fill")
+                                .foregroundStyle(.secondary)
+                            Slider(value: $settings.soundVolume, in: 0...1, step: 0.1)
+                            Image(systemName: "speaker.wave.3.fill")
+                                .foregroundStyle(.secondary)
+                        }
+                        .accessibilityLabel("Sound Volume")
+                        .accessibilityValue("\(Int(settings.soundVolume * 100))%")
+                    }
                     Toggle("Haptic Feedback", isOn: $settings.hapticsEnabled)
                 } header: {
                     Text("General")

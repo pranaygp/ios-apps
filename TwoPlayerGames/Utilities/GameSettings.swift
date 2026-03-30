@@ -4,6 +4,7 @@ class GameSettings: ObservableObject {
     static let shared = GameSettings()
 
     @AppStorage("soundEnabled") var soundEnabled = true
+    @AppStorage("soundVolume") var soundVolume: Double = 0.7
     @AppStorage("hapticsEnabled") var hapticsEnabled = true
     @AppStorage("pingPongWinScore") var pingPongWinScore = 5
     @AppStorage("airHockeyWinScore") var airHockeyWinScore = 7
