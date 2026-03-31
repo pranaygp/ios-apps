@@ -129,7 +129,7 @@ struct HomeView: View {
                  gameType: .simonSays, category: .party),
         GameCard(title: "Memory Match", subtitle: "Flip and find pairs", icon: "rectangle.on.rectangle",
                  gradient: [Color(red: 0.2, green: 0.75, blue: 0.85), Color(red: 0.05, green: 0.5, blue: 0.65)],
-                 gameType: .memoryMatch, category: .party),
+                 gameType: .memoryMatch, category: .strategy),
         GameCard(title: "Color Conquest", subtitle: "Claim territory before time runs out", icon: "square.grid.3x3.topleft.filled",
                  gradient: [Color(red: 0.65, green: 0.2, blue: 0.9), Color(red: 0.4, green: 0.05, blue: 0.7)],
                  gameType: .colorConquest, category: .party),

@@ -1,17 +1,42 @@
 import SwiftUI
 
+// MARK: - Model
+
+struct MemoryCard: Identifiable, Equatable {
+    let id: Int
+    let symbolName: String
+    let symbolColor: Color
+    var isFaceUp = false
+    var isMatched = false
+
+    static func == (lhs: MemoryCard, rhs: MemoryCard) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
+// MARK: - Card Symbol Set
+
+private let cardSymbols: [(name: String, color: Color)] = [
+    ("star.fill", Color.yellow),
+    ("heart.fill", Color.pink),
+    ("moon.fill", Color.purple),
+    ("flame.fill", Color.orange),
+    ("leaf.fill", Color.green),
+    ("bolt.fill", Color.cyan),
+    ("drop.fill", Color.blue),
+    ("pawprint.fill", Color(red: 0.6, green: 0.4, blue: 0.2)),
+    ("crown.fill", Color(red: 1.0, green: 0.75, blue: 0.0)),
+    ("diamond.fill", Color(red: 0.4, green: 0.85, blue: 0.95)),
+]
+
+// MARK: - View
+
 struct MemoryMatchView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
+    @EnvironmentObject var themeManager: ThemeManager
 
-    struct Card: Identifiable {
-        let id: Int
-        let emoji: String
-        var isFaceUp = false
-        var isMatched = false
-    }
-
-    @State private var cards: [Card] = []
+    @State private var cards: [MemoryCard] = []
     @State private var firstFlipped: Int?
     @State private var secondFlipped: Int?
     @State private var currentPlayer = 1
@@ -21,44 +46,35 @@ struct MemoryMatchView: View {
     @State private var isDraw = false
     @State private var isProcessing = false
     @State private var isPaused = false
-    @State private var matchFlash = false
-    @State private var lastMatchPlayer: Int?
     @State private var showTutorial = false
+    @State private var matchedIndices: Set<Int> = []
+    @State private var recentMatchIndices: Set<Int> = []
     @AppStorage("hasSeenTutorial_MemoryMatch") private var hasSeenTutorial = false
 
     private let gridColumns = 4
     private let gridRows = 5
     private var totalPairs: Int { (gridColumns * gridRows) / 2 }
 
-    private let emojis = [
-        "\u{1F680}", "\u{1F3AE}", "\u{1F525}", "\u{2B50}", "\u{1F308}", "\u{1F3B5}",
-        "\u{1F98A}", "\u{1F40B}", "\u{1F419}", "\u{1F996}", "\u{1F33B}", "\u{1F342}",
-        "\u{26A1}", "\u{1F48E}", "\u{1F3C6}", "\u{1F381}", "\u{1F3AF}", "\u{1F52E}",
-        "\u{1FA90}", "\u{1F9E9}"
-    ]
-
     var body: some View {
         GameTransitionView {
             ZStack {
-                Color(white: 0.06).ignoresSafeArea()
+                themeManager.currentTheme.backgroundColor.ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    // Player 2 banner (top)
                     FrostedScoreBanner(player: 2, score: score2, color: .red, isTop: true)
 
                     Spacer()
 
-                    // Turn indicator
-                    turnIndicator
+                    if gameWinner == nil && !isDraw {
+                        turnIndicator
+                    }
 
-                    // Card grid
                     cardGrid
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, 12)
                         .padding(.vertical, 8)
 
                     Spacer()
 
-                    // Player 1 banner (bottom)
                     FrostedScoreBanner(player: 1, score: score1, color: .blue, isTop: false)
                 }
 
@@ -154,6 +170,7 @@ struct MemoryMatchView: View {
     private func cardView(for index: Int) -> some View {
         let card = cards[index]
         let isFaceUp = card.isFaceUp || card.isMatched
+        let isRecentMatch = recentMatchIndices.contains(index)
 
         return Button {
             flipCard(at: index)
@@ -164,8 +181,8 @@ struct MemoryMatchView: View {
                     .fill(
                         LinearGradient(
                             colors: [
-                                Color(red: 0.15, green: 0.2, blue: 0.35),
-                                Color(red: 0.1, green: 0.12, blue: 0.25)
+                                themeManager.currentTheme.primaryColor.opacity(0.5),
+                                themeManager.currentTheme.secondaryColor.opacity(0.4)
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
@@ -173,12 +190,12 @@ struct MemoryMatchView: View {
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                            .stroke(themeManager.currentTheme.accentColor.opacity(0.2), lineWidth: 1)
                     )
                     .overlay(
                         Image(systemName: "questionmark")
                             .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(.white.opacity(0.15))
+                            .foregroundStyle(themeManager.currentTheme.textColor.opacity(0.15))
                     )
                     .opacity(isFaceUp ? 0 : 1)
 
@@ -186,48 +203,60 @@ struct MemoryMatchView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(
                         card.isMatched
-                            ? (lastMatchPlayer == 1 ? Color.blue.opacity(0.15) : Color.red.opacity(0.15))
+                            ? card.symbolColor.opacity(0.1)
                             : Color(white: 0.12)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(
                                 card.isMatched
-                                    ? (lastMatchPlayer == 1 ? Color.blue.opacity(0.4) : Color.red.opacity(0.4))
+                                    ? card.symbolColor.opacity(0.5)
                                     : Color.white.opacity(0.15),
                                 lineWidth: card.isMatched ? 2 : 1
                             )
                     )
                     .overlay(
-                        Text(card.emoji)
-                            .font(.system(size: 28))
+                        Image(systemName: card.symbolName)
+                            .font(.system(size: 26, weight: .semibold))
+                            .foregroundStyle(card.symbolColor)
+                            .shadow(color: card.symbolColor.opacity(0.4), radius: 4)
                     )
                     .opacity(isFaceUp ? 1 : 0)
             }
             .rotation3DEffect(
                 .degrees(isFaceUp ? 0 : 180),
-                axis: (x: 0, y: 1, z: 0)
+                axis: (x: 0, y: 1, z: 0),
+                perspective: 0.5
             )
-            .animation(.easeInOut(duration: 0.3), value: isFaceUp)
+            .animation(.easeInOut(duration: 0.35), value: isFaceUp)
+            .scaleEffect(isRecentMatch ? 1.08 : 1.0)
+            .shadow(
+                color: isRecentMatch ? card.symbolColor.opacity(0.6) : .clear,
+                radius: isRecentMatch ? 8 : 0
+            )
+            .animation(.easeInOut(duration: 0.4), value: isRecentMatch)
         }
         .frame(maxWidth: .infinity)
-        .aspectRatio(0.75, contentMode: .fit)
+        .aspectRatio(0.72, contentMode: .fit)
         .buttonStyle(.plain)
         .disabled(isFaceUp || isProcessing || isPaused)
-        .opacity(card.isMatched ? 0.6 : 1.0)
-        .accessibilityLabel(isFaceUp ? card.emoji : "Hidden card")
+        .opacity(card.isMatched && !isRecentMatch ? 0.55 : 1.0)
+        .scaleEffect(card.isMatched && !isRecentMatch ? 0.92 : 1.0)
+        .animation(.easeInOut(duration: 0.3), value: card.isMatched)
+        .accessibilityLabel(isFaceUp ? card.symbolName : "Hidden card")
     }
 
     // MARK: - Game Logic
 
     private func setupCards() {
-        let selectedEmojis = Array(emojis.shuffled().prefix(totalPairs))
-        var allCards: [Card] = []
-        for (i, emoji) in selectedEmojis.enumerated() {
-            allCards.append(Card(id: i * 2, emoji: emoji))
-            allCards.append(Card(id: i * 2 + 1, emoji: emoji))
+        var allCards: [MemoryCard] = []
+        for (i, symbol) in cardSymbols.prefix(totalPairs).enumerated() {
+            allCards.append(MemoryCard(id: i * 2, symbolName: symbol.name, symbolColor: symbol.color))
+            allCards.append(MemoryCard(id: i * 2 + 1, symbolName: symbol.name, symbolColor: symbol.color))
         }
         cards = allCards.shuffled()
+        matchedIndices = []
+        recentMatchIndices = []
     }
 
     private func flipCard(at index: Int) {
@@ -253,21 +282,31 @@ struct MemoryMatchView: View {
     private func checkMatch() {
         guard let first = firstFlipped, let second = secondFlipped else { return }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            if cards[first].emoji == cards[second].emoji {
-                // Match!
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            if cards[first].symbolName == cards[second].symbolName {
+                // Match found
                 withAnimation {
                     cards[first].isMatched = true
                     cards[second].isMatched = true
                 }
-                lastMatchPlayer = currentPlayer
+                matchedIndices.insert(first)
+                matchedIndices.insert(second)
+                recentMatchIndices = [first, second]
+
                 if currentPlayer == 1 { score1 += 1 } else { score2 += 1 }
                 SoundManager.playScore()
                 HapticManager.notification(.success)
 
+                // Clear recent match glow after a short delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                    withAnimation {
+                        recentMatchIndices = []
+                    }
+                }
+
                 // Check game over
                 if cards.allSatisfy({ $0.isMatched }) {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                         if score1 > score2 {
                             gameWinner = 1
                             SoundManager.playWin()
@@ -281,15 +320,15 @@ struct MemoryMatchView: View {
                         }
                     }
                 }
-                // Same player goes again on match
+                // Same player gets another turn on match
             } else {
                 // No match — flip back
                 withAnimation {
                     cards[first].isFaceUp = false
                     cards[second].isFaceUp = false
                 }
-                SoundManager.playLose()
-                HapticManager.impact(.light)
+                SoundManager.playHit()
+                HapticManager.notification(.warning)
                 currentPlayer = currentPlayer == 1 ? 2 : 1
             }
 
@@ -308,7 +347,6 @@ struct MemoryMatchView: View {
         firstFlipped = nil
         secondFlipped = nil
         isProcessing = false
-        lastMatchPlayer = nil
         setupCards()
     }
 }
@@ -316,4 +354,5 @@ struct MemoryMatchView: View {
 #Preview {
     MemoryMatchView()
         .preferredColorScheme(.dark)
+        .environmentObject(ThemeManager.shared)
 }
