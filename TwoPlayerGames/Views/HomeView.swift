@@ -73,7 +73,7 @@ struct HomeView: View {
     enum GameType: Identifiable {
         case gridlock
         case pingPong, airHockey, ticTacToe, connectFour, reactionTime, simonSays
-        case tugOfWar, memoryMatch, colorConquest, sonarDuel, dotsAndBoxes, snakeVsSnake, war, battleship, wordChain, mazeRace, rhythmTap, duelDraw, checkers, reversi, mancala
+        case tugOfWar, memoryMatch, colorConquest, sonarDuel, dotsAndBoxes, snakeVsSnake, war, battleship, wordChain, mazeRace, rhythmTap, duelDraw, checkers, reversi, mancala, hotPotato
         var id: Self { self }
     }
 
@@ -142,6 +142,9 @@ struct HomeView: View {
         GameCard(title: "Maze Race", subtitle: "Navigate the labyrinth", icon: "square.grid.3x3.middleright.filled",
                  gradient: [Color(red: 0.1, green: 0.75, blue: 0.65), Color(red: 0.05, green: 0.5, blue: 0.45)],
                  gameType: .mazeRace, category: .party),
+        GameCard(title: "Hot Potato", subtitle: "Pass the bomb before it blows!", icon: "flame.fill",
+                 gradient: [Color(red: 1.0, green: 0.45, blue: 0.1), Color(red: 0.85, green: 0.2, blue: 0.05)],
+                 gameType: .hotPotato, category: .party),
         // Card & Classic
         GameCard(title: "War", subtitle: "Classic card battle", icon: "suit.spade.fill",
                  gradient: [Color(red: 0.85, green: 0.65, blue: 0.2), Color(red: 0.7, green: 0.4, blue: 0.1)],
@@ -655,6 +658,8 @@ struct HomeView: View {
             ReversiView()
         case .mancala:
             MancalaView()
+        case .hotPotato:
+            HotPotatoView()
         }
     }
 }

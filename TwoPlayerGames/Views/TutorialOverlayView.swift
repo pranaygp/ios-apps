@@ -258,6 +258,19 @@ extension TutorialContent {
         controls: "Tap a pit on your side to pick up and distribute stones"
     )
 
+    static let hotPotato = TutorialContent(
+        title: "Hot Potato",
+        emoji: "\u{1F4A3}",
+        rules: [
+            "A ticking bomb bounces between players",
+            "Tap rapidly on your side to pass the bomb to your opponent",
+            "When the hidden timer runs out, the bomb EXPLODES on whoever has it",
+            "The bomb gets faster and more unpredictable each round",
+            "First to 5 round wins takes the match"
+        ],
+        controls: "Tap your side of the screen rapidly to pass the bomb"
+    )
+
     static let battleship = TutorialContent(
         title: "Battleship",
         emoji: "\u{1F6A2}",
